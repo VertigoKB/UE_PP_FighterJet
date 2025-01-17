@@ -18,6 +18,7 @@ AFighterPawn::AFighterPawn()
 
 	FighterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
 	FighterMesh->SetupAttachment(RootComponent);
+	FighterMesh->SetSimulatePhysics(true);
 
 	
 	HitBox = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));

@@ -20,10 +20,11 @@ public:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
 private:
+	UPROPERTY()
 	TSubclassOf<AActor> BPfighter;
-	
+	UPROPERTY()
 	TSubclassOf<AActor> BPspawnpointCarrier;
-	
+	UPROPERTY()
 	APawn* PlayerPawn;
 
 };

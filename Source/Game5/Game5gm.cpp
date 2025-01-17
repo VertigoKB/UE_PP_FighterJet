@@ -30,12 +30,15 @@ void AGame5gm::OnPostLogin(AController* NewPlayer)
 
 	FVector SpawnLocation = FVector::ZeroVector;
 	TArray<AActor*> FoundSpawnPoints;
+	FRotator SpawnRotation = FRotator(0, 0, 0);
+
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), BPspawnpointCarrier, FoundSpawnPoints);
 
-	if (FoundSpawnPoints.Num() > 0)
+	if (FoundSpawnPoints.Num() > 0) {
 		SpawnLocation = FoundSpawnPoints[0]->GetActorLocation();
+		SpawnRotation = FoundSpawnPoints[0]->GetActorRotation();
+	}
 
-	FRotator SpawnRotation = FRotator(0, 0, 0);
 
 	FActorSpawnParameters SpawnParam;
 	SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;

@@ -58,6 +58,10 @@ public:
 
 private:
 
+	UPROPERTY()
+	APawn* AllocatedPawn;
+
+
 	UFUNCTION()
 	void ThrottleCtrl(const FInputActionValue& Value);
 	UFUNCTION()
@@ -69,8 +73,7 @@ private:
 
 	UFUNCTION()
 	float RotatorClear(float Axis);
-
-	UPROPERTY()
-	APawn* AllocatedPawn;
-
+	
+	UFUNCTION()
+	void AfterBunnerSpeed();
 };

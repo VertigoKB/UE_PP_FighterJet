@@ -81,32 +81,48 @@ void AUserController::ThrottleCtrl(const FInputActionValue& Value)
 
 void AUserController::YawCtrl(const FInputActionValue& Value)
 {
-	float NoseOutput = Value.Get<float>();
+	if (!OnGround)
+	{
+		float NoseOutput = Value.Get<float>();
 
-	FRotator NewRotation = GetPawn()->GetActorRotation();
+		FVector CurrentLocation = GetPawn()->GetActorLocation();
+		FRotator NewRotation = GetPawn()->GetActorRotation();
 
-	NewRotation.Yaw += NoseOutput;
-	NewRotation.Yaw = RotatorClear(NewRotation.Yaw);
-	GetPawn()->SetActorRotation(NewRotation);
+		NewRotation.Yaw += NoseOutput;
+		NewRotation.Yaw = RotatorClear(NewRotation.Yaw);
+		//GetPawn()->SetActorRotation(NewRotation);
+		GetPawn()->SetActorLocationAndRotation(CurrentLocation, NewRotation, true);
+	}
 }
 void AUserController::PitchCtrl(const FInputActionValue& Value)
 {
-	float NoseOutput = Value.Get<float>();
+	if (!OnGround)
+	{
+		float NoseOutput = Value.Get<float>();
 
-	FQuat CurrentRotation = GetPawn()->GetActorRotation().Quaternion();
-	FQuat PitchRotation = FQuat(FVector(0, 1, 0), FMath::DegreesToRadians(NoseOutput));
-	FQuat NewRotation = CurrentRotation * PitchRotation;
+		FVector CurrentLocation = GetPawn()->GetActorLocation();
 
-	GetPawn()->SetActorRotation(NewRotation);
+		FQuat CurrentRotation = GetPawn()->GetActorRotation().Quaternion();
+		FQuat PitchRotation = FQuat(FVector(0, 1, 0), FMath::DegreesToRadians(NoseOutput));
+		FQuat NewRotation = CurrentRotation * PitchRotation;
+
+		GetPawn()->SetActorLocationAndRotation(CurrentLocation, NewRotation, true);
+	}
 }
 void AUserController::RollCtrl(const FInputActionValue& Value)
 {
-	float NoseOutput = Value.Get<float>();
-	FRotator NewRotation = GetPawn()->GetActorRotation();
+	if (!OnGround)
+	{
+		float NoseOutput = Value.Get<float>();
 
-	NewRotation.Roll += NoseOutput;
-	NewRotation.Roll = RotatorClear(NewRotation.Roll);
-	GetPawn()->SetActorRotation(NewRotation);
+		FVector CurrentLocation = GetPawn()->GetActorLocation();
+		FRotator NewRotation = GetPawn()->GetActorRotation();
+
+		NewRotation.Roll += NoseOutput;
+		NewRotation.Roll = RotatorClear(NewRotation.Roll);
+
+		GetPawn()->SetActorLocationAndRotation(CurrentLocation, NewRotation, true);
+	}
 }
 
 float AUserController::RotatorClear(float Axis)
@@ -115,6 +131,10 @@ float AUserController::RotatorClear(float Axis)
 		return 0.f;
 	else
 		return Axis;
+}
+
+void AUserController::AfterBunnerSpeed()
+{
 }
 
 //regacy code
