@@ -1,8 +1,10 @@
 /Saved
+!Saved/Config/WindowsEditor/EditorPerProjectUserSettings.ini
 /Intermediate
 /.vs
 /Build
 /Plugins
 /Content/VigilanteContent
+Binaries/
 *.sln
 *_BuiltData.uasset

@@ -17,6 +17,7 @@
 
 //Custom
 #include "InputDataAsset.h"
+#include "Interfaces/Throttle.h"
 
 #include "UserController.generated.h"
 
@@ -25,7 +26,7 @@
  */
 
 UCLASS()
-class GAME5_API AUserController : public APlayerController
+class GAME5_API AUserController : public APlayerController, public IThrottle
 {
 	GENERATED_BODY()
 
@@ -36,6 +37,10 @@ public:
 	virtual void SetupInputComponent() override;
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
 
+	virtual void Test() override;
+	virtual float GetThrottle() const override { return CtrlerThrottle; }
+	virtual void SetThrottle(float Value) override { CtrlerThrottle = Value; }
+
 	//meta = (AllowPrivateAccess = "true")
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* Game5InputMapping;
@@ -44,7 +49,7 @@ public:
 	UInputDataAsset* InputActions;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Throttle")
-	float ThrottleOutput	= 0.f;
+	float CtrlerThrottle	= 0.f;
 	UPROPERTY(BlueprintReadOnly, Category = "Nose")
 	float NoseYaw			= 0.f;
 	UPROPERTY(BlueprintReadOnly, Category = "Nose")

@@ -65,6 +65,10 @@ void AUserController::EndPlay(EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void AUserController::Test()
+{
+}
+
 void AUserController::ThrottleCtrl(const FInputActionValue& Value)
 {
 	float ThrottleAxis = Value.Get<float>();
@@ -74,9 +78,9 @@ void AUserController::ThrottleCtrl(const FInputActionValue& Value)
 
 	FVector Forward = GetPawn()->GetActorForwardVector();
 
-	ThrottleOutput += ThrottleAxis;
-	GetPawn()->AddMovementInput(Forward, ThrottleAxis);
-	//UE_LOG(LogTemp, Warning, TEXT("ForwardVector : {%f,%f,%f} / AUserController::ThrottleCtrl"), Forward.X, Forward.Y, Forward.Z )
+	if (MaxThrottle > CtrlerThrottle)
+		CtrlerThrottle += ThrottleAxis;
+	//GetPawn()->AddMovementInput(Forward, ThrottleAxis);
 }
 
 void AUserController::YawCtrl(const FInputActionValue& Value)

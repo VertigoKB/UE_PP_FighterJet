@@ -12,6 +12,8 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/FloatingPawnMovement.h"
 
+//Custom
+#include "Interfaces/Throttle.h"
 
 
 #include "FighterPawn.generated.h"
@@ -19,7 +21,7 @@
 
 class UPawnMovementComponent;
 UCLASS()
-class GAME5_API AFighterPawn : public APawn
+class GAME5_API AFighterPawn : public APawn, public IThrottle
 {
 	GENERATED_BODY()
 
@@ -28,11 +30,15 @@ public:
 	AFighterPawn();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Value")
-	float JetMaxSpeed = 600.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Value")
 	USkeletalMeshComponent* FighterMesh;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Value")
 	UBoxComponent* HitBox;
+
+
+	//Custom Interface
+	virtual void Test() override;
+	virtual float GetThrottle() const override { return PawnThrottle; }
+	virtual void SetThrottle(float Value) override { PawnThrottle = Value; }
 
 protected:
 	// Called when the game starts or when spawned
@@ -52,5 +58,11 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	float PawnThrottle = 0.f;
+
+	FTimerHandle TimerAfterBunner;
 
 };

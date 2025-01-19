@@ -3,6 +3,9 @@
 
 #include "FighterPawn.h"
 
+//Custom
+#include "UserController.h"
+
 class USkeletalMeshComponent;
 class UBoxComponent;
 class UFloatingPawnMovement;
@@ -13,7 +16,7 @@ AFighterPawn::AFighterPawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	FighterMovementComponent = CreateDefaultSubobject<UFloatingPawnMovement>(TEXT("MovementComponent"));
-	FighterMovementComponent->MaxSpeed = JetMaxSpeed;
+	FighterMovementComponent->MaxSpeed = 100000.f;
 	FighterMovementComponent->Acceleration = 5000.f;
 
 	FighterMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMeshComponent"));
@@ -32,6 +35,10 @@ AFighterPawn::AFighterPawn()
 	}
 }
 
+void AFighterPawn::Test()
+{
+}
+
 // Called when the game starts or when spawned
 void AFighterPawn::BeginPlay()
 {
@@ -48,6 +55,10 @@ void AFighterPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	AUserController* OwnerController = GetController<AUserController>();
+	float CtrlerThrottle = OwnerController->GetThrottle();
+	float ScalelizeThrottle = CtrlerThrottle * (1 / MaxThrottle);
+	AddMovementInput(GetActorForwardVector(), ScalelizeThrottle);
 }
 
 // Called to bind functionality to input
@@ -56,4 +67,3 @@ void AFighterPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
-
