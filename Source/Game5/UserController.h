@@ -81,4 +81,14 @@ private:
 	
 	UFUNCTION()
 	void AfterBunnerSpeed();
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "A_Value")
+	float DragCoefficient = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"), Category = "A_Value")
+	float TorquePitchStrength = 1.f;
+
+	UFUNCTION()
+	void ApplyDragForce();
 };

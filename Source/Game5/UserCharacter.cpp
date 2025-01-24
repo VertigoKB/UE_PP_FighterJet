@@ -3,6 +3,7 @@
 
 #include "UserCharacter.h"
 
+
 // Sets default values
 AUserCharacter::AUserCharacter()
 {

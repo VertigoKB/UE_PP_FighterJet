@@ -5,6 +5,8 @@
 
 //Engine
 #include "Kismet/GameplayStatics.h"
+#include "UserController.h"
+#include "FighterPawn.h"
 
 AGame5gm::AGame5gm()
 {
@@ -13,7 +15,7 @@ AGame5gm::AGame5gm()
 		PlayerControllerClass = BPusercontroller.Class;
 
 
-	ConstructorHelpers::FClassFinder<AActor> FIGHTERJET(TEXT("/Game/Blueprints/Player/BP_PlayerVehicle.BP_PlayerVehicle_C"));
+	ConstructorHelpers::FClassFinder<AActor> FIGHTERJET(TEXT("/Game/Blueprints/Player/BP_UserVehicle.BP_UserVehicle_C"));
 	if (FIGHTERJET.Succeeded())
 		BPfighter = FIGHTERJET.Class;
 
@@ -48,7 +50,10 @@ void AGame5gm::OnPostLogin(AController* NewPlayer)
 	{
 		SpawningActor = GetWorld()->SpawnActor<AActor>(BPfighter, SpawnLocation, SpawnRotation, SpawnParam);
 		PlayerPawn = Cast<APawn>(SpawningActor);
+		//AFighterPawn* tempPawn = Cast<AFighterPawn>(PlayerPawn);
 		NewPlayer->Possess(PlayerPawn);
+		//AUserController* TempCtrl = Cast<AUserController>(NewPlayer);
+		//TempCtrl->SetViewTargetWithBlend(Cast<AActor>(tempPawn->Camera), 1.f, EViewTargetBlendFunction::VTBlend_Linear);
 	//	FindPlayerStart()->GetTransform();
 	}
 }

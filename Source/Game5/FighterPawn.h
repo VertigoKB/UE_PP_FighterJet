@@ -3,66 +3,71 @@
 #pragma once
 
 //Default
+
 #include "CoreMinimal.h"
+#include "GameFramework/Character.h"
 
-//Component
 #include "Components/BoxComponent.h"
-#include "Components/SkeletalMeshComponent.h"
-//Engine
-#include "GameFramework/Pawn.h"
-#include "GameFramework/FloatingPawnMovement.h"
 
-//Custom
-#include "Interfaces/Throttle.h"
-
+#include "PlaneCharacter.generated.h"
 
 #include "FighterPawn.generated.h"
 
-
-class UPawnMovementComponent;
 UCLASS()
-class GAME5_API AFighterPawn : public APawn, public IThrottle
+class GAME5_API AFighterPawn : public APawn
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this pawn's properties
+	// Sets default values for this character's properties
 	AFighterPawn();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Value")
-	USkeletalMeshComponent* FighterMesh;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "A_Value")
-	UBoxComponent* HitBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "PrimitiveComponent")
+	class UPrimitiveComponent* PrimitiveRoot;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SpringArm")
+	class USpringArmComponent* SpringArm;
 
-	//Custom Interface
-	virtual void Test() override;
-	virtual float GetThrottle() const override { return PawnThrottle; }
-	virtual void SetThrottle(float Value) override { PawnThrottle = Value; }
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* Camera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")
+	class USkeletalMeshComponent* FighterMesh;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
+	UBoxComponent* BoxCollision;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
+	UBoxComponent* FrontRandingGearBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
+	UBoxComponent* RearLeftRandingGearBox;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
+	UBoxComponent* RearRightRandingGearBox;
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Movement")
-	UFloatingPawnMovement* FighterMovementComponent;
+	virtual void PostInitializeComponents() override;
+
+	virtual void OnConstruction(const FTransform& Transform) override;
 
 
-	
-	//virtual UPawnMovementComponent* GetMovementComponent() const override;
-
-
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
-	float PawnThrottle = 0.f;
 
-	FTimerHandle TimerAfterBunner;
+protected:
+	//Inlined Function
 
+	inline void BoxCollisionInit(UBoxComponent* ParamCollision) {
+		ParamCollision->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		ParamCollision->SetSimulatePhysics(true);
+		ParamCollision->SetCollisionObjectType(ECC_Pawn);
+		ParamCollision->SetCollisionResponseToAllChannels(ECR_Block);
+	};
 };
+
