@@ -9,14 +9,14 @@
 #include "Kismet/GameplayStatics.h"
 
 //EnhancedInput
-#include "EnhancedInputComponent.h"
-#include "InputMappingContext.h"
-#include "InputAction.h"
-#include "InputActionValue.h"
-#include "EnhancedInputSubsystems.h"
+//#include "EnhancedInputComponent.h"
+//#include "InputMappingContext.h"
+//#include "InputAction.h"
+//#include "InputActionValue.h"
+//#include "EnhancedInputSubsystems.h"
 
 //Custom
-#include "InputDataAsset.h"
+//#include "InputDataAsset.h"
 #include "Interfaces/Throttle.h"
 
 #include "UserController.generated.h"
@@ -26,7 +26,7 @@
  */
 
 UCLASS()
-class GAME5_API AUserController : public APlayerController, public IThrottle
+class GAME5_API AUserController : public APlayerController//, public IThrottle
 {
 	GENERATED_BODY()
 
@@ -36,11 +36,11 @@ public:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 	virtual void EndPlay(EEndPlayReason::Type EndPlayReason) override;
-
-	virtual void Test() override;
-	virtual float GetThrottle() const override { return CtrlerThrottle; }
-	virtual void SetThrottle(float Value) override { CtrlerThrottle = Value; }
-
+};
+	//virtual void Test() override;
+	//virtual float GetThrottle() const override { return CtrlerThrottle; }
+	//virtual void SetThrottle(float Value) override { CtrlerThrottle = Value; }
+	/*
 	//meta = (AllowPrivateAccess = "true")
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	UInputMappingContext* Game5InputMapping;
@@ -91,4 +91,4 @@ private:
 
 	UFUNCTION()
 	void ApplyDragForce();
-};
+};*/

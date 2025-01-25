@@ -53,9 +53,9 @@ APlaneCharacter::APlaneCharacter()
 		//MovementComponent->NavAgentProps = FNavAgentProperties();
 		//MovementComponent->NavAgentProps.AgentRadius = BoxCollision->GetScaledBoxExtent().X;
 		//MovementComponent->NavAgentProps.AgentHeight = BoxCollision->GetScaledBoxExtent().Z;
-		MovementComponent->MovementMode = MOVE_Walking;
-		MovementComponent->MaxFlySpeed = 800.f;
-		MovementComponent->AirControl = 1.f;
+		//MovementComponent->MovementMode = MOVE_Walking;
+		//MovementComponent->MaxFlySpeed = 800.f;
+		//MovementComponent->AirControl = 1.f;
 	}
 
 	FighterMesh = GetMesh();
@@ -67,6 +67,10 @@ APlaneCharacter::APlaneCharacter()
 	SpringArm->TargetArmLength = 600.f;
 	SpringArm->SetRelativeLocation(FVector(-1600.f, 0.f, 570.f));
 	SpringArm->TargetOffset = FVector(0.f, 0.f, 100.f);
+	SpringArm->bEnableCameraLag = true;
+	SpringArm->bEnableCameraRotationLag = true;
+	SpringArm->CameraLagSpeed = 10.f;
+	SpringArm->CameraRotationLagSpeed = 5.f;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
@@ -96,8 +100,11 @@ void APlaneCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	FVector Force = GetActorForwardVector() * 100000.f;
-	BoxCollision->AddForce(Force);
+	FVector Forward = GetActorForwardVector();
+	FVector Force = Forward * 1000.f;
+	//MovementComponent->AddForce(Force);
+	//AddMovementInput(Forward, 100.f);
+	GetCharacterMovement()->AddForce(Force);
 }
 
 // Called to bind functionality to input

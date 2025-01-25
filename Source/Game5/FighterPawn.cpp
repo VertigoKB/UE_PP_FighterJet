@@ -45,6 +45,8 @@ AFighterPawn::AFighterPawn()
 	RearLeftRandingGearBox->SetRelativeLocation(FVector(-237.f, -141.f, -117.f));
 	BoxCollisionInit(RearLeftRandingGearBox);
 
+	FighterMovement = CreateDefaultSubobject<UCharacterMovementComponent>(TEXT("FighterMovement"));
+
 	//FighterMesh->SetupAttachment(RootComponent);
 	//FighterMesh->SetRelativeLocation(FVector(-20.f, 0.f, -170.f));
 
@@ -82,7 +84,7 @@ void AFighterPawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	FVector Force = GetActorForwardVector() * 100000.f;
-	BoxCollision->AddForce(Force);
+	FighterMovement->AddImpulse(Force);
 }
 
 

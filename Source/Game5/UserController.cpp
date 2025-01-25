@@ -4,7 +4,7 @@
 
 //Engine
 #include "TimerManager.h"
-#include "Kismet/GameplayStatics.h"
+//#include "Kismet/GameplayStatics.h"
 
 //Custom
 #include "FighterPawn.h"
@@ -14,18 +14,6 @@
 AUserController::AUserController()
 {
 	PrimaryActorTick.bCanEverTick = true; 
-
-	const ConstructorHelpers::FObjectFinder<UInputMappingContext> IMC(TEXT("/Game/Blueprints/Input/IMC_Game5InputMapping.IMC_Game5InputMapping"));
-	if (IMC.Succeeded())
-		Game5InputMapping = IMC.Object;
-
-	const ConstructorHelpers::FObjectFinder<UInputDataAsset> IDA(TEXT("/Game/Blueprints/Input/InputDataBind.InputDataBind"));
-	if (IDA.Succeeded())
-		InputActions = IDA.Object;
-
-
-	//Temp, For Finding Fighter
-		
 
 	bShowMouseCursor = false;
 }
@@ -39,20 +27,6 @@ void AUserController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	//AllocatedPawn = Cast<AFighterPawn>(GetPawn());
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	Subsystem->ClearAllMappings();
-	Subsystem->AddMappingContext(Game5InputMapping, 0);
-
-	UEnhancedInputComponent* UserInput = Cast<UEnhancedInputComponent>(InputComponent);
-	if (UserInput)
-	{
-		UserInput->BindAction(InputActions->Throttle, ETriggerEvent::Triggered, this, &AUserController::ThrottleCtrl);
-		UserInput->BindAction(InputActions->NoseYaw, ETriggerEvent::Triggered, this, &AUserController::YawCtrl);
-		UserInput->BindAction(InputActions->NosePitch, ETriggerEvent::Triggered, this, &AUserController::PitchCtrl);
-		UserInput->BindAction(InputActions->NoseRoll, ETriggerEvent::Triggered, this, &AUserController::RollCtrl);
-	}
-
 	FTimerHandle TempTimer;
 	/*
 	GetWorld()->GetTimerManager().SetTimer(TempTimer, FTimerDelegate::CreateLambda([&]() {
@@ -64,11 +38,7 @@ void AUserController::EndPlay(EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 }
-
-void AUserController::Test()
-{
-}
-
+/*
 void AUserController::ThrottleCtrl(const FInputActionValue& Value)
 {
 	float ThrottleAxis = Value.Get<float>();
@@ -140,8 +110,7 @@ void AUserController::ApplyDragForce()
 
 		Primitive->AddForce(DragForce);
 	}*/
-}
-
+//}
 //regacy code
 /*
 

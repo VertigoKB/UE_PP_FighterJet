@@ -34,6 +34,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")
 	class USkeletalMeshComponent* FighterMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FighterMovement")
+	class UCharacterMovementComponent* FighterMovement;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
 	UBoxComponent* BoxCollision;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
