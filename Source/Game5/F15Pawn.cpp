@@ -8,6 +8,7 @@
 
 //Components
 #include "Components/SceneComponent.h"
+#include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 //Camera
 #include "Camera/CameraComponent.h"
@@ -31,11 +32,15 @@ AF15Pawn::AF15Pawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SceneRoot = CreateDefaultSubobject<USceneComponent>(TEXT("RootComponent"));
-	SetRootComponent(SceneRoot);
+	BoxRoot = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComponent"));
+	SetRootComponent(BoxRoot);
+	BoxRoot->SetBoxExtent(FVector(950.f, 70.f, 60.f));
+	BoxRoot->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	BoxRoot->SetCollisionObjectType(ECC_Pawn);
+	BoxRoot->SetCollisionResponseToAllChannels(ECR_Block);
 
 	ModelMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	ModelMesh->SetupAttachment(SceneRoot);
+	ModelMesh->SetupAttachment(BoxRoot);
 
 	//InputMappingContext
 	const ConstructorHelpers::FObjectFinder<UInputMappingContext> FindMapping(TEXT("/Game/Blueprints/Input/IMC_Game5InputMapping.IMC_Game5InputMapping"));
@@ -63,8 +68,6 @@ void AF15Pawn::BeginPlay()
 
 	ThrustSpeed = MinThrustToNotFall;
 	CurrentSpeed = MinThrustToNotFall;
-
-	
 }
 
 // Called every frame
@@ -73,6 +76,21 @@ void AF15Pawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdatePosition(DeltaTime);
+
+	if (RudderScale > 0.f)
+		RudderScale -= DeltaTime;
+	if (FlapsScale > 0.f)
+		FlapsScale -= DeltaTime;
+	if (AileronScale > 0.f)
+		AileronScale -= DeltaTime;
+
+
+	if (RudderScale < 0.f)
+		RudderScale += DeltaTime;
+	if (FlapsScale < 0.f)
+		FlapsScale += DeltaTime;
+	if (AileronScale < 0.f)
+		AileronScale += DeltaTime;
 }
 
 // Called to bind functionality to input
@@ -142,8 +160,10 @@ void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)
 {
 	TargetYaw = Yaw;
 	CurrentYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, DeltaSeconds, 10.f);
+
+	RudderScale = FMath::FInterpTo(0.f, CurrentYaw , DeltaSeconds, 15.f);
 	
-	FRotator NewRotation = FRotator(0.f, (CurrentYaw * DeltaSeconds * 20.f), 0.f);
+	FRotator NewRotation = FRotator(0.f, (CurrentYaw * DeltaSeconds * 80.f), 0.f);
 	AddActorLocalRotation(NewRotation);
 }
 
@@ -152,7 +172,10 @@ void AF15Pawn::UpdatePitch(float DeltaSeconds, float Pitch)
 	TargetPitch = Pitch;
 	CurrentPitch = FMath::FInterpTo(CurrentPitch, TargetPitch, DeltaSeconds, 10.f);
 
-	FRotator NewRotation = FRotator((CurrentPitch * DeltaSeconds * 20.f), 0.f, 0.f);
+	FlapsScale = FMath::FInterpTo(0.f, CurrentPitch, DeltaSeconds, 15.f);
+	StabilizersScale = CurrentPitch;
+
+	FRotator NewRotation = FRotator((CurrentPitch * DeltaSeconds * 80.f), 0.f, 0.f);
 	AddActorLocalRotation(NewRotation);
 }
 
@@ -161,7 +184,8 @@ void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
 	TargetRoll = Roll;
 	CurrentRoll = FMath::FInterpTo(CurrentRoll, TargetRoll, DeltaSeconds, 10.f);
 
-	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 20.f));
+	AileronScale = FMath::FInterpTo(0.f, CurrentRoll, DeltaSeconds, 15.f);
+
+	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 80.f));
 	AddActorLocalRotation(NewRotation);
 }
-

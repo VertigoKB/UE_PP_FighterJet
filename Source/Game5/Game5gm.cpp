@@ -6,7 +6,6 @@
 //Engine
 #include "Kismet/GameplayStatics.h"
 #include "UserController.h"
-#include "FighterPawn.h"
 
 AGame5gm::AGame5gm()
 {

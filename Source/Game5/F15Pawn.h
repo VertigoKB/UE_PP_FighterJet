@@ -33,8 +33,8 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 private:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "ture"), Category = "RootComponent")
-	class USceneComponent* SceneRoot;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "ture"), Category = "BoxComponent")
+	class UBoxComponent* BoxRoot;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "ture"), Category = "SkeletalMesh")
 	class USkeletalMeshComponent* ModelMesh;
 
@@ -62,25 +62,25 @@ private:
 	void UpdateRoll(float DeltaSeconds, float Roll);
 
 	//Constants
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float MaxThrustSpeed = 10000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float ThrustMultiplier = 2500.f;
 	UPROPERTY()
 	float Gravity = 981.f;
 	UPROPERTY()
 	float Drag = 0.25f;
 	//Constants - Control Surfaces
-	UPROPERTY()
-	float MaxFlapPitch = 10.f;
-	UPROPERTY()
-	float MaxElevatorPitch = 25.f;
-	UPROPERTY()
-	float MaxRudderYaw = 45.f;
-	UPROPERTY()
-	float MaxAileronPitch = 45.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float RudderScale = 0.f;			//Yaw
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float FlapsScale = 0.f;				//Pitch, Front
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float StabilizersScale = 0.f;		//Pitch, Rear
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float AileronScale = 0.f;			//Roll
 
 	//DynamicVariables
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
@@ -90,15 +90,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float AppliedGravity = 0.f;
 	//DynamicVariables - Rotation
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float TargetYaw = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float CurrentYaw = 0.f;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float TargetPitch = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float CurrentPitch = 0.f;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float TargetRoll = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float CurrentRoll = 0.f;

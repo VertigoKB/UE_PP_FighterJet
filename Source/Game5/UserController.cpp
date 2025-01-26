@@ -7,7 +7,6 @@
 //#include "Kismet/GameplayStatics.h"
 
 //Custom
-#include "FighterPawn.h"
 
 
 
