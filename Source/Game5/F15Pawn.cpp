@@ -24,7 +24,7 @@
 
 
 //Custom
-#include "InputDataAsset.h"
+#include "CommonData/InputDataAsset.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()
@@ -76,21 +76,7 @@ void AF15Pawn::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	UpdatePosition(DeltaTime);
-
-	if (RudderScale > 0.f)
-		RudderScale -= DeltaTime;
-	if (FlapsScale > 0.f)
-		FlapsScale -= DeltaTime;
-	if (AileronScale > 0.f)
-		AileronScale -= DeltaTime;
-
-
-	if (RudderScale < 0.f)
-		RudderScale += DeltaTime;
-	if (FlapsScale < 0.f)
-		FlapsScale += DeltaTime;
-	if (AileronScale < 0.f)
-		AileronScale += DeltaTime;
+	RotateAnimation(DeltaTime);
 }
 
 // Called to bind functionality to input
@@ -108,6 +94,7 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		AircraftInput->BindAction(InputAction->NoseYaw, ETriggerEvent::Triggered, this, &AF15Pawn::YawInput);
 		AircraftInput->BindAction(InputAction->NosePitch, ETriggerEvent::Triggered, this, &AF15Pawn::PitchInput);
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Triggered, this, &AF15Pawn::RollInput);
+		AircraftInput->BindAction(InputAction->LaunchFlare, ETriggerEvent::Started, this, &AF15Pawn::FlareInput);
 	}
 
 }
@@ -138,6 +125,13 @@ void AF15Pawn::RollInput(const FInputActionValue& Value)
 	UpdateRoll(GetWorld()->GetDeltaSeconds(), Input);
 }
 
+void AF15Pawn::FlareInput(const FInputActionValue& Value)
+{
+	bool bInput = Value.Get<bool>();
+	//키를 누르면 플레이어가 발사되게 할 예정.
+	//우선 오브젝트 풀링 시스템 구현 필요.
+}
+
 //Update PawnTransform
 void AF15Pawn::UpdatePosition(float DeltaSeconds)
 {
@@ -161,7 +155,7 @@ void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)
 	TargetYaw = Yaw;
 	CurrentYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, DeltaSeconds, 10.f);
 
-	RudderScale = FMath::FInterpTo(0.f, CurrentYaw , DeltaSeconds, 15.f);
+	RudderScale = (FMath::FInterpTo(0.f, CurrentYaw , DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
 	
 	FRotator NewRotation = FRotator(0.f, (CurrentYaw * DeltaSeconds * 80.f), 0.f);
 	AddActorLocalRotation(NewRotation);
@@ -172,7 +166,7 @@ void AF15Pawn::UpdatePitch(float DeltaSeconds, float Pitch)
 	TargetPitch = Pitch;
 	CurrentPitch = FMath::FInterpTo(CurrentPitch, TargetPitch, DeltaSeconds, 10.f);
 
-	FlapsScale = FMath::FInterpTo(0.f, CurrentPitch, DeltaSeconds, 15.f);
+	FlapsScale = (FMath::FInterpTo(0.f, CurrentPitch, DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
 	StabilizersScale = CurrentPitch;
 
 	FRotator NewRotation = FRotator((CurrentPitch * DeltaSeconds * 80.f), 0.f, 0.f);
@@ -184,8 +178,25 @@ void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
 	TargetRoll = Roll;
 	CurrentRoll = FMath::FInterpTo(CurrentRoll, TargetRoll, DeltaSeconds, 10.f);
 
-	AileronScale = FMath::FInterpTo(0.f, CurrentRoll, DeltaSeconds, 15.f);
+	AileronScale = (FMath::FInterpTo(0.f, CurrentRoll, DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
 
 	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 80.f));
 	AddActorLocalRotation(NewRotation);
+}
+
+void AF15Pawn::RotateAnimation(float DeltaSeconds)
+{
+	if (RudderScale > 0.f)
+		RudderScale -= DeltaSeconds * CtrlSurfacesRecoveryFactor;
+	if (FlapsScale > 0.f)
+		FlapsScale -= DeltaSeconds * CtrlSurfacesRecoveryFactor;
+	if (AileronScale > 0.f)
+		AileronScale -= DeltaSeconds * CtrlSurfacesRecoveryFactor;
+
+	if (RudderScale < 0.f)
+		RudderScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
+	if (FlapsScale < 0.f)
+		FlapsScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
+	if (AileronScale < 0.f)
+		AileronScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
 }

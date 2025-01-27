@@ -51,6 +51,8 @@ private:
 	void PitchInput(const FInputActionValue& Value);
 	UFUNCTION()
 	void RollInput(const FInputActionValue& Value);
+	UFUNCTION()
+	void FlareInput(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void UpdatePosition(float DeltaSeconds);
@@ -60,6 +62,10 @@ private:
 	void UpdatePitch(float DeltaSeconds, float Pitch);
 	UFUNCTION()
 	void UpdateRoll(float DeltaSeconds, float Roll);
+
+
+	UFUNCTION()
+	void RotateAnimation(float DeltaSeconds);
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
@@ -72,15 +78,15 @@ private:
 	float Gravity = 981.f;
 	UPROPERTY()
 	float Drag = 0.25f;
-	//Constants - Control Surfaces
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
-	float RudderScale = 0.f;			//Yaw
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
-	float FlapsScale = 0.f;				//Pitch, Front
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
-	float StabilizersScale = 0.f;		//Pitch, Rear
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
-	float AileronScale = 0.f;			//Roll
+	//Constants - Control surfaces Animation
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RotateAnimation",
+		meta = (AllowPrivateAccess = "true"),
+		meta = (ToolTip = "Default = 1. The maximum extent angle multiplier which the control surfaces can be deployed."))
+	float CtrlSurfacesRatio = 3.f;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "RotateAnimation",
+		meta = (AllowPrivateAccess = "true"),
+		meta = (ToolTip = "Default = 1. The speed at which the control surfaces recover to their original position."))
+	float CtrlSurfacesRecoveryFactor = 1.f;
 
 	//DynamicVariables
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
@@ -102,4 +108,20 @@ private:
 	float TargetRoll = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float CurrentRoll = 0.f;
+	//DynamicVariables - Control Surfaces
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float RudderScale = 0.f;			//Yaw
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float FlapsScale = 0.f;				//Pitch, Front
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float StabilizersScale = 0.f;		//Pitch, Rear
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
+	float AileronScale = 0.f;			//Roll
+
+
+	//Debug
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Debug")
+	float DebugValueA = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Debug")
+	float DebugValueB = 0.f;
 };
