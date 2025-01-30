@@ -9,6 +9,16 @@ APoolingObject::APoolingObject()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	SelfRef = this;
+
+}
+
+void APoolingObject::OnObjectReturnToPool(APoolingObject* ToPool)
+{
+	if (ToPool)
+	{
+		ObjectReturn.Broadcast(ToPool);
+	}
 }
 
 // Called when the game starts or when spawned
@@ -28,14 +38,14 @@ void APoolingObject::Activate()
 void APoolingObject::Deactivate()
 {
 	OnDeactivate();
-	//델리게이트 추가
+	OnObjectReturnToPool(this);
 }
 
-void APoolingObject::OnActivate()
+void APoolingObject::OnActivate_Implementation()
 {
 }
 
-void APoolingObject::OnDeactivate()
+void APoolingObject::OnDeactivate_Implementation()
 {
 }
 

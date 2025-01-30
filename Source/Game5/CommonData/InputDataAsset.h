@@ -31,5 +31,5 @@ public:
 	UInputAction* NoseRoll;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* LaunchFlare;
+	UInputAction* LaunchProjectile;
 };

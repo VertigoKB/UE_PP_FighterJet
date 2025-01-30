@@ -94,7 +94,7 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		AircraftInput->BindAction(InputAction->NoseYaw, ETriggerEvent::Triggered, this, &AF15Pawn::YawInput);
 		AircraftInput->BindAction(InputAction->NosePitch, ETriggerEvent::Triggered, this, &AF15Pawn::PitchInput);
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Triggered, this, &AF15Pawn::RollInput);
-		AircraftInput->BindAction(InputAction->LaunchFlare, ETriggerEvent::Started, this, &AF15Pawn::FlareInput);
+		AircraftInput->BindAction(InputAction->LaunchProjectile, ETriggerEvent::Started, this, &AF15Pawn::LaunchInput);
 	}
 
 }
@@ -125,7 +125,7 @@ void AF15Pawn::RollInput(const FInputActionValue& Value)
 	UpdateRoll(GetWorld()->GetDeltaSeconds(), Input);
 }
 
-void AF15Pawn::FlareInput(const FInputActionValue& Value)
+void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 {
 	bool bInput = Value.Get<bool>();
 	//키를 누르면 플레이어가 발사되게 할 예정.
