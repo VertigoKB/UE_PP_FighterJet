@@ -41,6 +41,7 @@ AF15Pawn::AF15Pawn()
 
 	ModelMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	ModelMesh->SetupAttachment(BoxRoot);
+	ModelMesh->SetRelativeLocation(FVector(0.f, 0.f, -200.f));
 
 	//InputMappingContext
 	const ConstructorHelpers::FObjectFinder<UInputMappingContext> FindMapping(TEXT("/Game/Blueprints/Input/IMC_Game5InputMapping.IMC_Game5InputMapping"));
@@ -49,15 +50,20 @@ AF15Pawn::AF15Pawn()
 	const ConstructorHelpers::FObjectFinder<UInputDataAsset> FindInputAction(TEXT("/Game/Blueprints/Input/InputDataBind.InputDataBind"));
 	if (FindInputAction.Succeeded())
 		InputAction = FindInputAction.Object;
-
+	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
 	SpringArm->TargetArmLength = 600.f;
 	SpringArm->SetRelativeLocation(FVector(-1600.f, 0.f, 570.f));
 	SpringArm->TargetOffset = FVector(0.f, 0.f, 100.f);
+	SpringArm->bInheritYaw = true;
+	SpringArm->bInheritPitch = true;
+	SpringArm->bInheritRoll = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
+
+	Tags.Add(FName("Player"));
 
 }
 
@@ -66,8 +72,8 @@ void AF15Pawn::BeginPlay()
 {
 	Super::BeginPlay();
 
-	ThrustSpeed = MinThrustToNotFall;
-	CurrentSpeed = MinThrustToNotFall;
+	ThrustSpeed = 0.f;
+	CurrentSpeed = 0.f;
 }
 
 // Called every frame
@@ -147,7 +153,7 @@ void AF15Pawn::UpdatePosition(float DeltaSeconds)
 	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);
 
-	AddActorWorldOffset(NewPosition);
+	AddActorWorldOffset(NewPosition,true);
 }
 
 void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)

@@ -30,7 +30,7 @@ void APoolingObject::BeginPlay()
 
 void APoolingObject::Activate()
 {
-	DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	//DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	//K2_DetachFromActor(EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld, EDetachmentRule::KeepWorld);
 	OnActivate();
 }

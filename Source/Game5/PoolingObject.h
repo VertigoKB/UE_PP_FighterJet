@@ -24,7 +24,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Events")
 	void OnObjectReturnToPool(APoolingObject* ToPool);
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Activate() override;
+	UFUNCTION(BlueprintCallable)
 	virtual void Deactivate() override;
 
 protected:

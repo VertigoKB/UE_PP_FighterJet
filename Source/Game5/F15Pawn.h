@@ -89,33 +89,33 @@ private:
 	float CtrlSurfacesRecoveryFactor = 1.f;
 
 	//DynamicVariables
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float AppliedGravity = 0.f;
 	//DynamicVariables - Rotation
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float TargetYaw = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float CurrentYaw = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float TargetPitch = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float CurrentPitch = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float TargetRoll = 0.f;
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY()
 	float CurrentRoll = 0.f;
 	//DynamicVariables - Control Surfaces
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float RudderScale = 0.f;			//Yaw
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float FlapsScale = 0.f;				//Pitch, Front
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float StabilizersScale = 0.f;		//Pitch, Rear
-	UPROPERTY(Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "DynamicVariables")
 	float AileronScale = 0.f;			//Roll
 
 
