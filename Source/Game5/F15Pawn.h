@@ -63,9 +63,14 @@ private:
 	UFUNCTION()
 	void UpdateRoll(float DeltaSeconds, float Roll);
 
-
 	UFUNCTION()
 	void RotateAnimation(float DeltaSeconds);
+
+	UFUNCTION(BlueprintCallable)
+	FTransform GetMissileSocketLoaction(uint8 SocketNum);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	TArray<bool> IsMissileEmpty;
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Constants")

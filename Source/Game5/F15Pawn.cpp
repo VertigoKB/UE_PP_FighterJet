@@ -25,6 +25,7 @@
 
 //Custom
 #include "CommonData/InputDataAsset.h"
+#include "CommonData/CommonEnum.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()
@@ -65,6 +66,7 @@ AF15Pawn::AF15Pawn()
 
 	Tags.Add(FName("Player"));
 
+	IsMissileEmpty.Init(true, 4);	//4 is Max Loadable Missile
 }
 
 // Called when the game starts or when spawned
@@ -153,7 +155,7 @@ void AF15Pawn::UpdatePosition(float DeltaSeconds)
 	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);
 
-	AddActorWorldOffset(NewPosition,true);
+	AddActorWorldOffset(NewPosition,true, nullptr, ETeleportType::TeleportPhysics);
 }
 
 void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)
@@ -164,7 +166,7 @@ void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)
 	RudderScale = (FMath::FInterpTo(0.f, CurrentYaw , DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
 	
 	FRotator NewRotation = FRotator(0.f, (CurrentYaw * DeltaSeconds * 80.f), 0.f);
-	AddActorLocalRotation(NewRotation);
+	AddActorLocalRotation(NewRotation, true);
 }
 
 void AF15Pawn::UpdatePitch(float DeltaSeconds, float Pitch)
@@ -176,7 +178,7 @@ void AF15Pawn::UpdatePitch(float DeltaSeconds, float Pitch)
 	StabilizersScale = CurrentPitch;
 
 	FRotator NewRotation = FRotator((CurrentPitch * DeltaSeconds * 80.f), 0.f, 0.f);
-	AddActorLocalRotation(NewRotation);
+	AddActorLocalRotation(NewRotation, true);
 }
 
 void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
@@ -187,7 +189,7 @@ void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
 	AileronScale = (FMath::FInterpTo(0.f, CurrentRoll, DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
 
 	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 80.f));
-	AddActorLocalRotation(NewRotation);
+	AddActorLocalRotation(NewRotation, true);
 }
 
 void AF15Pawn::RotateAnimation(float DeltaSeconds)
@@ -205,4 +207,22 @@ void AF15Pawn::RotateAnimation(float DeltaSeconds)
 		FlapsScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
 	if (AileronScale < 0.f)
 		AileronScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
+}
+
+FTransform AF15Pawn::GetMissileSocketLoaction(uint8 SocketNum)
+{
+	EMissileSocket Socket = static_cast<EMissileSocket>(SocketNum);
+
+	switch (Socket)
+	{
+	case EMissileSocket::MissileLO :
+		return ModelMesh->GetSocketTransform(FName("MissileLO"));
+	case EMissileSocket::MissileRO :
+		return ModelMesh->GetSocketTransform(FName("MissileRO"));
+	case EMissileSocket::MissileLI :
+		return ModelMesh->GetSocketTransform(FName("MissileLI"));
+	case EMissileSocket::MissileRI :
+		return ModelMesh->GetSocketTransform(FName("MissileRI"));
+	}
+	return FTransform();
 }
