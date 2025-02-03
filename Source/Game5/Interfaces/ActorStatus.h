@@ -17,9 +17,4 @@ class GAME5_API IActorStatus
 public:
 	virtual void Activate() = 0;
 	virtual void Deactivate() = 0;
-
-	//virtual float GetThrottle() const = 0;
-	//virtual void SetThrottle(float Value) = 0;
-
-	//static constexpr float MaxThrottle = 600.f;
 };

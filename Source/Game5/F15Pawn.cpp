@@ -26,6 +26,8 @@
 //Custom
 #include "CommonData/InputDataAsset.h"
 #include "CommonData/CommonEnum.h"
+#include "ObjectPoolSystem.h"
+#include "PoolingObject.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()
@@ -66,7 +68,8 @@ AF15Pawn::AF15Pawn()
 
 	Tags.Add(FName("Player"));
 
-	IsMissileEmpty.Init(true, 4);	//4 is Max Loadable Missile
+	IsMissileEmpty.Init(true, MaxLoadableMissile);
+	LoadedMissiles.Init(nullptr, MaxLoadableMissile);
 }
 
 // Called when the game starts or when spawned
@@ -209,7 +212,7 @@ void AF15Pawn::RotateAnimation(float DeltaSeconds)
 		AileronScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
 }
 
-FTransform AF15Pawn::GetMissileSocketLoaction(uint8 SocketNum)
+FTransform AF15Pawn::GetMissileSocketLoaction(const uint8 SocketNum)
 {
 	EMissileSocket Socket = static_cast<EMissileSocket>(SocketNum);
 
@@ -225,4 +228,14 @@ FTransform AF15Pawn::GetMissileSocketLoaction(uint8 SocketNum)
 		return ModelMesh->GetSocketTransform(FName("MissileRI"));
 	}
 	return FTransform();
+}
+
+void AF15Pawn::InitLoadMissile(UObjectPoolSystem* Pool)
+{
+	AActor* temp = nullptr;
+	for (int8 i = 0; i < MaxLoadableMissile; i++)
+	{
+		temp = Pool->GetObject(GetMissileSocketLoaction(i));
+		IsMissileEmpty[i] = false;
+	}
 }

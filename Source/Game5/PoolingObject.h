@@ -21,9 +21,6 @@ public:
 	UPROPERTY(BlueprintAssignable, Category = "Events")
 	FReturnCall ObjectReturn;
 
-	UFUNCTION(BlueprintCallable, Category = "Events")
-	void OnObjectReturnToPool(APoolingObject* ToPool);
-
 	UFUNCTION(BlueprintCallable)
 	virtual void Activate() override;
 	UFUNCTION(BlueprintCallable)

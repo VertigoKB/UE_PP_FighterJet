@@ -31,16 +31,19 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-private:
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UFUNCTION(BlueprintCallable)
+	APoolingObject* GetObject(FTransform SpawnTransform);
+
+protected:
+	UPROPERTY(BlueprintReadWrite)
 	TArray<APoolingObject*> Pool;
 
 	FTransform Offset;
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite)
 	FVector SpawnLocation = FVector(0, 0, -10000.f);
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite)
 	FRotator SpawnRotate = FRotator(0.f, 0.f, 0.f);
-	UPROPERTY(BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UPROPERTY(BlueprintReadWrite)
 	FVector SpawnScale = FVector(1.f, 1.f, 1.f);
 
 	FActorSpawnParameters spawnParam;
@@ -49,6 +52,4 @@ private:
 	void SpawnObjectToPool();
 	UFUNCTION()
 	void MovetoPoolChild(APoolingObject* ToPool);
-	UFUNCTION(BlueprintCallable)
-	APoolingObject* GetObject(FTransform SpawnTransform);
 };

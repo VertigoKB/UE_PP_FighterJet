@@ -13,18 +13,11 @@ APoolingObject::APoolingObject()
 
 }
 
-void APoolingObject::OnObjectReturnToPool(APoolingObject* ToPool)
-{
-	if (ToPool)
-	{
-		ObjectReturn.Broadcast(ToPool);
-	}
-}
-
 // Called when the game starts or when spawned
 void APoolingObject::BeginPlay()
 {
 	Super::BeginPlay();
+	//GetWorld()->GetFirstPlayerController()->GetPawn();
 	
 }
 
@@ -38,7 +31,7 @@ void APoolingObject::Activate()
 void APoolingObject::Deactivate()
 {
 	OnDeactivate();
-	OnObjectReturnToPool(this);
+	ObjectReturn.Broadcast(this);
 }
 
 void APoolingObject::OnActivate_Implementation()
