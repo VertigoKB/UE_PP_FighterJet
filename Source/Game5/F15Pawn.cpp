@@ -5,6 +5,7 @@
 //Engine
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "TimerManager.h"
 
 //Components
 #include "Components/SceneComponent.h"
@@ -108,7 +109,6 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Triggered, this, &AF15Pawn::RollInput);
 		AircraftInput->BindAction(InputAction->LaunchProjectile, ETriggerEvent::Started, this, &AF15Pawn::LaunchInput);
 	}
-
 }
 void AF15Pawn::ThrottleInput(const FInputActionValue& Value)
 {
@@ -141,17 +141,7 @@ void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 {
 	bool bInput = Value.Get<bool>();
 
-	int32 Index = -1;
-	IsMissileEmpty.Find(false, Index);
-
-	if (Index != -1 || Index != INDEX_NONE)
-	{
-		IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[Index]);
-		Interface->Execute_MissileLaunch(LoadedMissiles[Index], Index);
-		IsMissileEmpty[Index] = true;
-		LoadedMissiles[Index] = nullptr;
-	}
-
+	MissileAction();
 }
 
 //Update PawnTransform
@@ -166,7 +156,7 @@ void AF15Pawn::UpdatePosition(float DeltaSeconds)
 
 	AppliedGravity = UKismetMathLibrary::MapRangeClamped(CurrentSpeed, 0.f, MinThrustToNotFall, Gravity, 0.f);
 
-	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds);
+	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds * 1.5f);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);
 
 	AddActorWorldOffset(NewPosition,true, nullptr, ETeleportType::TeleportPhysics);
@@ -204,6 +194,20 @@ void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
 
 	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 80.f));
 	AddActorLocalRotation(NewRotation, true);
+}
+
+void AF15Pawn::MissileAction()
+{
+	int32 Index = -1;
+	IsMissileEmpty.Find(false, Index);
+
+	if (Index != -1 || Index != INDEX_NONE)
+	{
+		IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[Index]);
+		Interface->Execute_MissileLaunch(LoadedMissiles[Index], Index);
+		IsMissileEmpty[Index] = true;
+		LoadedMissiles[Index] = nullptr;
+	}
 }
 
 void AF15Pawn::RotateAnimation(float DeltaSeconds)
@@ -245,10 +249,14 @@ void AF15Pawn::InitLoadMissile(UObjectPoolSystem* Pool)
 {
 	for (int8 i = 0; i < MaxLoadableMissile; i++)
 	{
-		LoadedMissiles[i] = Pool->GetObject(GetMissileSocketLoaction(i));
-		IsMissileEmpty[i] = false;
-		IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[i]);
-		//Interface->MissileNumber(3);
-		Interface->Execute_MissileNumber(LoadedMissiles[i], i);
+		MissileLoadProcess(Pool, i);
 	}
+}
+
+void AF15Pawn::MissileLoadProcess(UObjectPoolSystem* Pool, uint8 Num)
+{
+	LoadedMissiles[Num] = Pool->GetObject(GetMissileSocketLoaction(Num));
+	IsMissileEmpty[Num] = false;
+	IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[Num]);
+	Interface->Execute_MissileNumber(LoadedMissiles[Num], Num);
 }

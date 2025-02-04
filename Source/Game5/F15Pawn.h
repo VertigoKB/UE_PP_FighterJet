@@ -34,22 +34,23 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	
-
-private:	//constants variable
-	static constexpr int8 MaxLoadableMissile = 4;
-
 protected:	//Missile
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<AActor*> LoadedMissiles;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<bool> IsMissileEmpty;
-
 	UFUNCTION(BlueprintCallable)
 	FTransform GetMissileSocketLoaction(const uint8 SocketNum);
 
 	UFUNCTION(BlueprintCallable)
 	void InitLoadMissile(UObjectPoolSystem* Pool);
+
+	UFUNCTION(BlueprintCallable)
+	void MissileLoadProcess(UObjectPoolSystem* Pool, uint8 Num);
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<AActor*> LoadedMissiles;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<bool> IsMissileEmpty;
+
+	static constexpr int8 MaxLoadableMissile = 4;
+
 protected:	//Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "BoxComponent")
 	class UBoxComponent* BoxRoot;
@@ -57,11 +58,6 @@ protected:	//Component
 	class USkeletalMeshComponent* ModelMesh;
 
 protected:	//Input, Control Surfaces Animation
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	class UInputMappingContext* AirCraftInputMapping;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
-	class UInputDataAsset* InputAction;
-
 	UFUNCTION()
 	void ThrottleInput(const FInputActionValue& Value);
 	UFUNCTION()
@@ -81,9 +77,17 @@ protected:	//Input, Control Surfaces Animation
 	void UpdatePitch(float DeltaSeconds, float Pitch);
 	UFUNCTION()
 	void UpdateRoll(float DeltaSeconds, float Roll);
+	UFUNCTION()
+	void MissileAction();
 
 	UFUNCTION()
 	void RotateAnimation(float DeltaSeconds);
+
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	class UInputMappingContext* AirCraftInputMapping;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
+	class UInputDataAsset* InputAction;
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
@@ -105,9 +109,9 @@ protected:	//Input, Control Surfaces Animation
 	float CtrlSurfacesRecoveryFactor = 1.f;
 
 	//DynamicVariables
-	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;
-	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float AppliedGravity = 0.f;
