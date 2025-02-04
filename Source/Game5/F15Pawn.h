@@ -40,9 +40,8 @@ private:	//constants variable
 	static constexpr int8 MaxLoadableMissile = 4;
 
 protected:	//Missile
-	class APoolingObject;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<APoolingObject*> LoadedMissiles;
+	TArray<AActor*> LoadedMissiles;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<bool> IsMissileEmpty;
 

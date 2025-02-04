@@ -26,6 +26,7 @@
 //Custom
 #include "CommonData/InputDataAsset.h"
 #include "CommonData/CommonEnum.h"
+#include "Interfaces/MissilesNumbering.h"
 #include "ObjectPoolSystem.h"
 #include "PoolingObject.h"
 
@@ -139,8 +140,18 @@ void AF15Pawn::RollInput(const FInputActionValue& Value)
 void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 {
 	bool bInput = Value.Get<bool>();
-	//키를 누르면 플레이어가 발사되게 할 예정.
-	//우선 오브젝트 풀링 시스템 구현 필요.
+
+	int32 Index = -1;
+	IsMissileEmpty.Find(false, Index);
+
+	if (Index != -1 || Index != INDEX_NONE)
+	{
+		IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[Index]);
+		Interface->Execute_MissileLaunch(LoadedMissiles[Index], Index);
+		IsMissileEmpty[Index] = true;
+		LoadedMissiles[Index] = nullptr;
+	}
+
 }
 
 //Update PawnTransform
@@ -232,10 +243,12 @@ FTransform AF15Pawn::GetMissileSocketLoaction(const uint8 SocketNum)
 
 void AF15Pawn::InitLoadMissile(UObjectPoolSystem* Pool)
 {
-	AActor* temp = nullptr;
 	for (int8 i = 0; i < MaxLoadableMissile; i++)
 	{
-		temp = Pool->GetObject(GetMissileSocketLoaction(i));
+		LoadedMissiles[i] = Pool->GetObject(GetMissileSocketLoaction(i));
 		IsMissileEmpty[i] = false;
+		IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[i]);
+		//Interface->MissileNumber(3);
+		Interface->Execute_MissileNumber(LoadedMissiles[i], i);
 	}
 }
