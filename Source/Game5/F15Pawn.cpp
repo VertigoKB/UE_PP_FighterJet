@@ -22,8 +22,6 @@
 #include "InputActionValue.h"
 #include "EnhancedInputSubsystems.h"
 
-
-
 //Custom
 #include "CommonData/InputDataAsset.h"
 #include "CommonData/CommonEnum.h"
@@ -97,6 +95,7 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+	//Enhanced Input Need to modify Build.cs
 	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetWorld()->GetFirstLocalPlayerFromController());
 	Subsystem->ClearAllMappings();
 	Subsystem->AddMappingContext(AirCraftInputMapping, 0);
