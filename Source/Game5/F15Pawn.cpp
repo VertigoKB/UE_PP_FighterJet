@@ -28,6 +28,7 @@
 #include "Interfaces/MissilesNumbering.h"
 #include "ObjectPoolSystem.h"
 #include "PoolingObject.h"
+#include "FighterGameInst.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()
@@ -259,3 +260,31 @@ void AF15Pawn::MissileLoadProcess(UObjectPoolSystem* Pool, uint8 Num)
 	IMissilesNumbering* Interface = Cast<IMissilesNumbering>(LoadedMissiles[Num]);
 	Interface->Execute_MissileNumber(LoadedMissiles[Num], Num);
 }
+
+void AF15Pawn::SetDataAtInstance_Implementation()
+{
+	UFighterGameInst* gameinstance = GetGameInstance<UFighterGameInst>();
+	gameinstance->ThrustSpeed = ThrustSpeed;
+	gameinstance->CurrentSpeed = CurrentSpeed;
+	gameinstance->PlayerZ = GetActorLocation().Z;
+	gameinstance->PlayerRotator = GetActorRotation();
+}
+
+void AF15Pawn::GetDataFromInstance_Implementation()
+{
+	UFighterGameInst* gameinstance = GetGameInstance<UFighterGameInst>();
+	ThrustSpeed = gameinstance->ThrustSpeed;
+	CurrentSpeed = gameinstance->CurrentSpeed;
+
+	FRotator Rotation = gameinstance->PlayerRotator;
+	FVector Location = GetActorLocation();
+	Location.Z = gameinstance->PlayerZ;
+	SetActorLocationAndRotation(Location, Rotation.Quaternion());
+}
+
+void AF15Pawn::MoveCountIncrement_Implementation()
+{
+	UFighterGameInst* gameinstance = GetGameInstance<UFighterGameInst>();
+	gameinstance->MoveCounter++;
+}
+

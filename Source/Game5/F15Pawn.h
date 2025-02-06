@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 
-#include "Interfaces/MissilesNumbering.h"
+#include "Interfaces/DataSavior.h"
 
 #include "F15Pawn.generated.h"
 
 UCLASS()
-class GAME5_API AF15Pawn : public APawn
+class GAME5_API AF15Pawn : public APawn, public IDataSavior
 {
 	GENERATED_BODY()
 
@@ -27,6 +27,13 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+
+	UFUNCTION(BlueprintCallable)
+	void SetDataAtInstance_Implementation() override;
+	UFUNCTION(BlueprintCallable)
+	void GetDataFromInstance_Implementation() override;
+	UFUNCTION(BlueprintCallable)
+	void MoveCountIncrement_Implementation() override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
