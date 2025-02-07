@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "Game5gm.h"
+#include "FighterGameMode.h"
 
 //Engine
 #include "Kismet/GameplayStatics.h"
-#include "UserController.h"
+#include "Player/UserController.h"
 
-AGame5gm::AGame5gm()
+AFighterGameMode::AFighterGameMode()
 {
 	ConstructorHelpers::FClassFinder<APlayerController> BPusercontroller(TEXT("/Game/Blueprints/Player/BP_UserController.BP_UserController_C"));
 	if (BPusercontroller.Succeeded())
@@ -25,7 +25,7 @@ AGame5gm::AGame5gm()
 	DefaultPawnClass = nullptr;
 }
 
-void AGame5gm::OnPostLogin(AController* NewPlayer)
+void AFighterGameMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);
 

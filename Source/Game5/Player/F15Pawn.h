@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 
-#include "Interfaces/DataSavior.h"
+#include "../Interfaces/DataSavior.h"
 
 #include "F15Pawn.generated.h"
 

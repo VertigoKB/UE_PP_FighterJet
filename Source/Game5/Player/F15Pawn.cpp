@@ -23,12 +23,12 @@
 #include "EnhancedInputSubsystems.h"
 
 //Custom
-#include "CommonData/InputDataAsset.h"
-#include "CommonData/CommonEnum.h"
-#include "Interfaces/MissilesNumbering.h"
-#include "ObjectPoolSystem.h"
-#include "PoolingObject.h"
-#include "FighterGameInst.h"
+#include "../CommonData/InputDataAsset.h"
+#include "../CommonData/CommonEnum.h"
+#include "../Interfaces/MissilesNumbering.h"
+#include "../ObjectPool/ObjectPoolSystem.h"
+#include "../ObjectPool/PoolingObject.h"
+#include "../GameInstance/FighterGameInst.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()

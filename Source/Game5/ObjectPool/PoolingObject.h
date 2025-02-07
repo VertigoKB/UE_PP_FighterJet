@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/ActorStatus.h"
+#include "../Interfaces/ActorStatus.h"
 #include "PoolingObject.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FReturnCall, APoolingObject*, SelfRef);

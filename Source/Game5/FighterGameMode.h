@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "Game5gm.generated.h"
+#include "FighterGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class GAME5_API AGame5gm : public AGameModeBase
+class GAME5_API AFighterGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 	
 public:
-	AGame5gm();
+	AFighterGameMode();
 
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
