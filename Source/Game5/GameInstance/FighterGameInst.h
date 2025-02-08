@@ -15,6 +15,9 @@ class GAME5_API UFighterGameInst : public UGameInstance
 	GENERATED_BODY()
 	
 public:
+	UFUNCTION(BlueprintCallable)
+	void RequestMoveCountIncrement();
+
 	UPROPERTY(BlueprintReadWrite)
 	float ThrustSpeed = 0.f;
 	UPROPERTY(BlueprintReadWrite)
@@ -25,7 +28,5 @@ public:
 	FRotator PlayerRotator = FRotator::ZeroRotator;
 	UPROPERTY(BlueprintReadWrite)
 	int32 MoveCounter = 0;
-	UPROPERTY(BlueprintReadWrite)
-	bool bDuringCutScene = false;
 
 };

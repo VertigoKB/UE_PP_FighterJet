@@ -3,3 +3,7 @@
 
 #include "FighterGameInst.h"
 
+void UFighterGameInst::RequestMoveCountIncrement()
+{
+	MoveCounter++;
+}
