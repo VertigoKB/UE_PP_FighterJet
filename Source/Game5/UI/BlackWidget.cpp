@@ -9,7 +9,8 @@ void UBlackWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	NormalizedDuration = FadeIn->GetEndTime() / FadeDuration;
+	FadeInEndTime = FadeIn->GetEndTime();
+	NormalizedDuration = FadeInEndTime / FadeDuration;
 	
 }
 

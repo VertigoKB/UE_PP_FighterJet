@@ -7,10 +7,8 @@
 #include "HoldingDataComp.generated.h"
 
 /*
-이 컴포넌트는 재사용을 위한 컴포넌트가 아닙니다.
-이 컴포넌트는 플레이어의 AF15Pawn에만 사용 가능합니다.
-& This Component Not For Recycle.
-& This Component Attachable to Player's AF15Pawn Actor.
+& This component not for recycle.
+& This component only attachable to player's AF15Pawn actor.
 */
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API UHoldingDataComp : public UActorComponent
@@ -30,10 +28,18 @@ protected:
 	TSoftObjectPtr<class UWorld> MainWorld = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TSoftObjectPtr<class UWorld> BattleField = nullptr;
-
 public:	
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+public:
+	FTimerHandle DistanceCheckUpdater;
+	UFUNCTION()
+	void SetUpdaterTimerWhenCountZero();
+
+	float CurrentDistanceToTarget = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MinDistanceToMoveLevel = 100000.f;
 
 public:	//& About MoveCounter
 	UFUNCTION(BlueprintCallable)
@@ -65,6 +71,10 @@ private:
 	UPROPERTY()
 	class AF15Pawn* Player = nullptr;
 	UPROPERTY()
+	class APlayerHUD* Hud = nullptr;
+
+private:
+	UPROPERTY()
 	TSubclassOf<AActor> TargetClass = nullptr;
 	UPROPERTY()
 	TArray<AActor*> TargetArray;
@@ -76,4 +86,5 @@ private:
 private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess))
 	float DEBUG = 0.f;
+
 };

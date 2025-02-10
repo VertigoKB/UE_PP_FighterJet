@@ -13,7 +13,7 @@ UCLASS()
 class GAME5_API UFighterGameInst : public UGameInstance
 {
 	GENERATED_BODY()
-	
+
 public:
 	UFUNCTION(BlueprintCallable)
 	void RequestMoveCountIncrement();

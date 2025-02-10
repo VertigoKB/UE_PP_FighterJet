@@ -3,3 +3,7 @@
 
 #include "GameChangerTarget.h"
 
+void AGameChangerTarget::RequestDestroySelf()
+{
+	Destroy();
+}

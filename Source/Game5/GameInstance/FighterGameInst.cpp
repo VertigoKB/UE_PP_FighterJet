@@ -2,6 +2,7 @@
 
 
 #include "FighterGameInst.h"
+#include "Engine/World.h"
 
 void UFighterGameInst::RequestMoveCountIncrement()
 {

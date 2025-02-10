@@ -24,6 +24,8 @@ public:
 	class UImage* BlackImage;
 	UPROPERTY(meta = (BindWidgetAnim), Transient)
 	class UWidgetAnimation* FadeIn;
+	UPROPERTY()
+	float FadeInEndTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float FadeDuration = 1.f;

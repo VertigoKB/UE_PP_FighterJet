@@ -2,11 +2,13 @@
 
 
 #include "HoldingDataComp.h"
+#include "Kismet/GameplayStatics.h"
+#include "TimerManager.h"
 #include "Player/F15Pawn.h"
 #include "GameInstance/FighterGameInst.h"
-#include "Kismet/GameplayStatics.h"
 #include "GameChangerTarget.h"
-#include "TimerManager.h"
+#include "UI/PlayerHUD.h"
+#include "UI/BlackWidget.h"
 
 // Sets default values for this component's properties
 UHoldingDataComp::UHoldingDataComp()
@@ -33,8 +35,18 @@ void UHoldingDataComp::BeginPlay()
 		bFlag = false;
 	}
 	
-	if (bFlag)
+	if (bFlag && (WorldGameInst->MoveCounter == 0))
 		FindTargetWhenInit();
+
+	if (WorldGameInst->MoveCounter == 0)
+		SetUpdaterTimerWhenCountZero();
+	else
+	{	//It may be overridden even when the function is executed due to external factors such as the process of initializing the world.
+		FTimerHandle Temp;
+		TheWorld->GetTimerManager().SetTimer(Temp, this, &UHoldingDataComp::RequestDataFromGameInst, 0.05f, false);
+	}
+
+	Hud->GeneratedBlackWidget->PlayFadeEffect(true);
 }
 
 
@@ -43,7 +55,6 @@ void UHoldingDataComp::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	DEBUG = Player->GetDistanceTo(Target);
 }
 
 
@@ -102,6 +113,11 @@ bool UHoldingDataComp::Initialize()
 	if (!Player)
 		return false;
 
+	APlayerController* Controller = Cast<APlayerController>(Player->GetController());
+	Hud = Cast<APlayerHUD>(Controller->GetHUD());
+	if (!Hud)
+		return false;
+
 
 	return true;
 }
@@ -128,5 +144,26 @@ bool UHoldingDataComp::FindTargetWhenInit()
 		Target = Cast<AGameChangerTarget>(TargetArray[0]);
 
 	return Target != nullptr;
+}
+
+void UHoldingDataComp::SetUpdaterTimerWhenCountZero()
+{
+	TheWorld->GetTimerManager().SetTimer(DistanceCheckUpdater, FTimerDelegate::CreateLambda([this]() {
+		CurrentDistanceToTarget = Player->GetDistanceTo(Target);
+		if (CurrentDistanceToTarget > MinDistanceToMoveLevel)
+		{
+			TheWorld->GetTimerManager().ClearTimer(DistanceCheckUpdater);
+			RequestSetData();
+			WorldGameInst->RequestMoveCountIncrement();
+			Hud->GeneratedBlackWidget->PlayFadeEffect(false);
+
+			FTimerHandle WaitFadeAnimEnd;
+			float EndTime = Hud->GeneratedBlackWidget->FadeInEndTime;
+			TheWorld->GetTimerManager().SetTimer(WaitFadeAnimEnd, FTimerDelegate::CreateLambda([this]() {
+				UGameplayStatics::OpenLevelBySoftObjectPtr(TheWorld, BattleField);
+				}), EndTime, false);
+		}
+
+		}), 0.03, true);
 }
 

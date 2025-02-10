@@ -13,5 +13,9 @@ UCLASS()
 class GAME5_API AGameChangerTarget : public ATargetPoint
 {
 	GENERATED_BODY()
-	
+
+public:
+	UFUNCTION()
+	void RequestDestroySelf();
+
 };
