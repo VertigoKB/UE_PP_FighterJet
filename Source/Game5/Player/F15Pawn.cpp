@@ -227,6 +227,14 @@ void AF15Pawn::RotateAnimation(float DeltaSeconds)
 		AileronScale += DeltaSeconds * CtrlSurfacesRecoveryFactor;
 }
 
+void AF15Pawn::RequestActiveCamera(bool bIsActive)
+{
+	if (bIsActive)
+		Camera->Activate();
+	else
+		Camera->Deactivate();
+}
+
 FTransform AF15Pawn::GetMissileSocketLoaction(const uint8 SocketNum)
 {
 	EMissileSocket Socket = static_cast<EMissileSocket>(SocketNum);

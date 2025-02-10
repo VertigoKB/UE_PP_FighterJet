@@ -47,6 +47,11 @@ void UHoldingDataComp::BeginPlay()
 	}
 
 	Hud->GeneratedBlackWidget->PlayFadeEffect(true);
+
+	if (WorldGameInst->MoveCounter == 1)
+	{
+		Player->RequestActiveCamera(false);
+	}
 }
 
 

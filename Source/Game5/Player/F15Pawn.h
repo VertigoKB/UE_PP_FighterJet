@@ -149,4 +149,9 @@ private: //Debug
 	float DebugValueA = 0.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Debug")
 	float DebugValueB = 0.f;
+
+public:
+	UFUNCTION()
+	void RequestActiveCamera(bool bIsActive);
+
 };
