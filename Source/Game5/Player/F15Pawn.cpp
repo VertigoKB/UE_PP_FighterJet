@@ -67,6 +67,10 @@ AF15Pawn::AF15Pawn()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(SpringArm);
 
+	CockpitCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CockpitCamera"));
+	CockpitCamera->SetupAttachment(BoxRoot);
+	CockpitCamera->SetRelativeLocation(FVector(500.f, 0.f, 140.f));
+
 	Tags.Add(FName("Player"));
 
 	IsMissileEmpty.Init(true, MaxLoadableMissile);
@@ -80,6 +84,10 @@ void AF15Pawn::BeginPlay()
 
 	ThrustSpeed = 0.f;
 	CurrentSpeed = 0.f;
+
+	if (CockpitCamera)
+		CockpitCamera->Deactivate();
+
 }
 
 // Called every frame
@@ -207,6 +215,20 @@ void AF15Pawn::MissileAction()
 		Interface->Execute_MissileLaunch(LoadedMissiles[Index], Index);
 		IsMissileEmpty[Index] = true;
 		LoadedMissiles[Index] = nullptr;
+	}
+}
+
+void AF15Pawn::CameraChange()
+{
+	if (CockpitCamera->IsActive())
+	{
+		CockpitCamera->Deactivate();
+		Camera->Activate();
+	}
+	else
+	{
+		CockpitCamera->Activate();
+		Camera->Deactivate();
 	}
 }
 

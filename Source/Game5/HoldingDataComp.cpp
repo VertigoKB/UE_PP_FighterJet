@@ -42,15 +42,17 @@ void UHoldingDataComp::BeginPlay()
 		SetUpdaterTimerWhenCountZero();
 	else
 	{	//It may be overridden even when the function is executed due to external factors such as the process of initializing the world.
-		FTimerHandle Temp;
-		TheWorld->GetTimerManager().SetTimer(Temp, this, &UHoldingDataComp::RequestDataFromGameInst, 0.05f, false);
+
+		//DEPRECATED: This timer is disabled. Player's data will be initialized by ACutSceneTrigger
+		//FTimerHandle Temp;
+		//TheWorld->GetTimerManager().SetTimer(Temp, this, &UHoldingDataComp::RequestDataFromGameInst, 0.05f, false);
 	}
 
 	Hud->GeneratedBlackWidget->PlayFadeEffect(true);
 
 	if (WorldGameInst->MoveCounter == 1)
 	{
-		Player->RequestActiveCamera(false);
+		//Player->RequestActiveCamera(false);
 	}
 }
 

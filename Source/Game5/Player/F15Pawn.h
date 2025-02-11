@@ -24,6 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* Camera;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* CockpitCamera;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -153,5 +156,7 @@ private: //Debug
 public:
 	UFUNCTION()
 	void RequestActiveCamera(bool bIsActive);
+	UFUNCTION()
+	void CameraChange();
 
 };
