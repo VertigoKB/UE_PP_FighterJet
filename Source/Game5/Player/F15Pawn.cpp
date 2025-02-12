@@ -71,6 +71,12 @@ AF15Pawn::AF15Pawn()
 	CockpitCamera->SetupAttachment(BoxRoot);
 	CockpitCamera->SetRelativeLocation(FVector(500.f, 0.f, 140.f));
 
+	CutSceneCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CutSceneCamera"));
+	CutSceneCamera->SetupAttachment(BoxRoot);
+	CutSceneCamera->SetRelativeLocation(FVector(545.f, 635.f, 0.f));
+	FRotator SceneCameraRotation = FRotator(0.f, -120.f, 0.f);
+	CutSceneCamera->SetRelativeRotation(SceneCameraRotation.Quaternion());
+
 	Tags.Add(FName("Player"));
 
 	IsMissileEmpty.Init(true, MaxLoadableMissile);
@@ -218,17 +224,31 @@ void AF15Pawn::MissileAction()
 	}
 }
 
-void AF15Pawn::CameraChange()
+void AF15Pawn::CameraChange(ECameraType Type)
 {
-	if (CockpitCamera->IsActive())
+	switch (Type)
 	{
-		CockpitCamera->Deactivate();
+	case ECameraType::Main:
+	{
 		Camera->Activate();
+		CockpitCamera->Deactivate();
+		CutSceneCamera->Deactivate();
+		break;
 	}
-	else
+	case ECameraType::Cockpit:
 	{
 		CockpitCamera->Activate();
 		Camera->Deactivate();
+		CutSceneCamera->Deactivate();
+		break;
+	}
+	case ECameraType::CutScene:
+	{
+		CutSceneCamera->Activate();
+		CockpitCamera->Deactivate();
+		Camera->Deactivate();
+		break;
+	}
 	}
 }
 

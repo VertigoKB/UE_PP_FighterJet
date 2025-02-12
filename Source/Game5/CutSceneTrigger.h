@@ -31,6 +31,11 @@ protected:
 	UPROPERTY()
 	class AUserController* PlayerCtrler = nullptr;
 
+	UPROPERTY()
+	TSubclassOf<AActor> SubCamera = nullptr;
+	UPROPERTY()
+	TArray<AActor*> FoundCamera;
+
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	FVector StageEntry = FVector(-50000.f, 0.f, 50000.f);

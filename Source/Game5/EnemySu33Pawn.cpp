@@ -1,0 +1,57 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+
+#include "EnemySu33Pawn.h"
+
+#include "Kismet/GameplayStatics.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "Components/SceneComponent.h"
+#include "Components/StaticMeshComponent.h"
+
+#include "Player/F15Pawn.h"
+
+// Sets default values
+AEnemySu33Pawn::AEnemySu33Pawn()
+{
+ 	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	PrimaryActorTick.bCanEverTick = true;
+
+	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	SetRootComponent(Root);
+
+	DummyCube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PhysicsCube"));
+	ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Engine/BasicShapes/Cube.Cube"));
+	if (CubeAsset.Succeeded())
+		DummyCube->SetStaticMesh(CubeAsset.Object);
+	DummyCube->SetupAttachment(Root);
+
+	EnemyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
+	EnemyMesh->SetupAttachment(DummyCube);
+
+	bIsSpatiallyLoaded = false;
+}
+
+// Called when the game starts or when spawned
+void AEnemySu33Pawn::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Player = Cast<AF15Pawn>(GetWorld()->GetFirstPlayerController()->GetPawn());
+
+	
+}
+
+// Called every frame
+void AEnemySu33Pawn::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+}
+
+// Called to bind functionality to input
+void AEnemySu33Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+}
+

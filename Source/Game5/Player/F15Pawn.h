@@ -9,6 +9,14 @@
 
 #include "F15Pawn.generated.h"
 
+UENUM()
+enum class ECameraType : uint8
+{
+	Main = 0,
+	Cockpit,
+	CutScene
+};
+
 UCLASS()
 class GAME5_API AF15Pawn : public APawn
 {
@@ -26,6 +34,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
 	class UCameraComponent* CockpitCamera;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Camera")
+	class UCameraComponent* CutSceneCamera;
 
 protected:
 	// Called when the game starts or when spawned
@@ -156,7 +167,8 @@ private: //Debug
 public:
 	UFUNCTION()
 	void RequestActiveCamera(bool bIsActive);
+
 	UFUNCTION()
-	void CameraChange();
+	void CameraChange(ECameraType Type);
 
 };

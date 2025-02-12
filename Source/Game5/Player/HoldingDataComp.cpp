@@ -4,11 +4,11 @@
 #include "HoldingDataComp.h"
 #include "Kismet/GameplayStatics.h"
 #include "TimerManager.h"
-#include "Player/F15Pawn.h"
-#include "GameInstance/FighterGameInst.h"
-#include "GameChangerTarget.h"
-#include "UI/PlayerHUD.h"
-#include "UI/BlackWidget.h"
+#include "F15Pawn.h"
+#include "../GameInstance/FighterGameInst.h"
+#include "../RefOnly/GameChangerTarget.h"
+#include "../UI/PlayerHUD.h"
+#include "../UI/BlackWidget.h"
 
 // Sets default values for this component's properties
 UHoldingDataComp::UHoldingDataComp()
