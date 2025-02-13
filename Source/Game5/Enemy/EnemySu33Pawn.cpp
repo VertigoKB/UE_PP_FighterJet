@@ -8,7 +8,9 @@
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
 
-#include "Player/F15Pawn.h"
+#include "../Player/F15Pawn.h"
+#include "EnemyPositionUpdater.h"
+#include "PlayerFinder.h"
 
 // Sets default values
 AEnemySu33Pawn::AEnemySu33Pawn()
@@ -18,15 +20,18 @@ AEnemySu33Pawn::AEnemySu33Pawn()
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
 	SetRootComponent(Root);
-
+	/*
 	DummyCube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PhysicsCube"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Engine/BasicShapes/Cube.Cube"));
 	if (CubeAsset.Succeeded())
 		DummyCube->SetStaticMesh(CubeAsset.Object);
-	DummyCube->SetupAttachment(Root);
+	DummyCube->SetupAttachment(Root);*/
 
 	EnemyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
-	EnemyMesh->SetupAttachment(DummyCube);
+	EnemyMesh->SetupAttachment(Root);
+
+	PositionUpdater = CreateDefaultSubobject<UEnemyPositionUpdater>(TEXT("PositionUpdater"));
+	PlayerFinder = CreateDefaultSubobject<UPlayerFinder>(TEXT("PlayerFinder"));
 
 	bIsSpatiallyLoaded = false;
 }

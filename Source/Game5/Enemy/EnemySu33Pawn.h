@@ -14,15 +14,34 @@ class GAME5_API AEnemySu33Pawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AEnemySu33Pawn();
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPitchUp = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bPitchDown = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRollLeft = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bRollRight = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bYawLeft = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bYawRight = false;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<class USceneComponent> Root;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UStaticMeshComponent> DummyCube;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshComponent")
 	TObjectPtr<class USkeletalMeshComponent> EnemyMesh;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UEnemyPositionUpdater> PositionUpdater;
+
+	UPROPERTY()
+	TObjectPtr<class UPlayerFinder> PlayerFinder;
 
 protected:
 	UPROPERTY()
