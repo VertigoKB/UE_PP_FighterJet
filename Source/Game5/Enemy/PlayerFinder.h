@@ -6,17 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "PlayerFinder.generated.h"
 
-USTRUCT()
-struct FPlayerRelativePosition
-{
-	GENERATED_BODY()
-
-	bool bIsInFront;
-	bool bIsAbove;
-	bool bIsInSight;
-};
-
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API UPlayerFinder : public UActorComponent
 {
@@ -30,7 +19,7 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	bool bComponentFlag = false;
+	FTimerHandle RelativePositionCheckTimer;
 
 public:	
 	// Called every frame
@@ -40,15 +29,26 @@ protected:
 	UFUNCTION()
 	bool Initialize();
 
+
 protected:
 	UPROPERTY()
 	TObjectPtr<class AEnemySu33Pawn> CompOwner;
+
+	UPROPERTY()
+	TObjectPtr<class AEnemyPlaneController> AIController;
 	
 	UPROPERTY()
 	TObjectPtr<class UWorld> World;
 
 	UPROPERTY()
 	TObjectPtr<AActor> Target;
+
+protected:
+	UFUNCTION()
+	struct FPlayerRelativePosition GetPlayerPositionRelativeToCompOwner();
+
+	UPROPERTY()
+	float ViewAngle = 45.f;
 
 		
 };

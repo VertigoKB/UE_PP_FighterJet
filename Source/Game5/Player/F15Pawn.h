@@ -106,7 +106,7 @@ protected:	//Input, Control Surfaces Animation
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
-	float MaxThrustSpeed = 9500.f;
+	float MaxThrustSpeed = 10000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")

@@ -6,6 +6,18 @@
 #include "GameFramework/Pawn.h"
 #include "EnemySu33Pawn.generated.h"
 
+USTRUCT(BlueprintType)
+struct FPlayerRelativePosition
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsInFront;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsAbove;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsInSight;
+};
 UCLASS()
 class GAME5_API AEnemySu33Pawn : public APawn
 {
@@ -14,6 +26,9 @@ class GAME5_API AEnemySu33Pawn : public APawn
 public:
 	// Sets default values for this pawn's properties
 	AEnemySu33Pawn();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPlayerRelativePosition Decision;
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -30,8 +45,8 @@ public:
 	bool bYawRight = false;
 
 protected:
-	UPROPERTY()
-	TObjectPtr<class USceneComponent> Root;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<class UBoxComponent> Root;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "MeshComponent")
 	TObjectPtr<class USkeletalMeshComponent> EnemyMesh;

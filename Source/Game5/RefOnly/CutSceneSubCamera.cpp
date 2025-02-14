@@ -24,9 +24,12 @@ void ACutSceneSubCamera::BeginPlay()
 {
 	Super::BeginPlay();
 
-	AActor* TempPlayer = GetWorld()->GetFirstPlayerController()->GetPawn();
-	Player = Cast<AF15Pawn>(TempPlayer);
-	SetOwner(Player);
+	FTimerHandle InitTimer;
+	GetWorldTimerManager().SetTimer(InitTimer, FTimerDelegate::CreateLambda([this]() {
+		AActor* TempPlayer = GetWorld()->GetFirstPlayerController()->GetPawn();
+		Player = Cast<AF15Pawn>(TempPlayer);
+		SetOwner(Player);
+		}), 1.f, false);
 }
 
 void ACutSceneSubCamera::Tick(float DeltaTime)

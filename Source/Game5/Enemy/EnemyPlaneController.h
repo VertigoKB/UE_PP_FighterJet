@@ -6,9 +6,7 @@
 #include "AIController.h"
 #include "EnemyPlaneController.generated.h"
 
-/**
- * 
- */
+
 UCLASS()
 class GAME5_API AEnemyPlaneController : public AAIController
 {

@@ -7,10 +7,12 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Components/SceneComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Components/BoxComponent.h"
 
 #include "../Player/F15Pawn.h"
 #include "EnemyPositionUpdater.h"
 #include "PlayerFinder.h"
+#include "EnemyPlaneController.h"
 
 // Sets default values
 AEnemySu33Pawn::AEnemySu33Pawn()
@@ -18,8 +20,9 @@ AEnemySu33Pawn::AEnemySu33Pawn()
  	// Set this pawn to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	Root = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
+	Root = CreateDefaultSubobject<UBoxComponent>(TEXT("RootComp"));
 	SetRootComponent(Root);
+	Root->SetBoxExtent(FVector(1000.f, 100.f, 100.f));
 	/*
 	DummyCube = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PhysicsCube"));
 	ConstructorHelpers::FObjectFinder<UStaticMesh> CubeAsset(TEXT("/Engine/BasicShapes/Cube.Cube"));
@@ -29,10 +32,12 @@ AEnemySu33Pawn::AEnemySu33Pawn()
 
 	EnemyMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("SkeletalMesh"));
 	EnemyMesh->SetupAttachment(Root);
+	EnemyMesh->SetRelativeLocation(FVector(0.f, 0.f, -245.f));
 
 	PositionUpdater = CreateDefaultSubobject<UEnemyPositionUpdater>(TEXT("PositionUpdater"));
 	PlayerFinder = CreateDefaultSubobject<UPlayerFinder>(TEXT("PlayerFinder"));
 
+	AIControllerClass = AEnemyPlaneController::StaticClass();
 	bIsSpatiallyLoaded = false;
 }
 

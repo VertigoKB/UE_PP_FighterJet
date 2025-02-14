@@ -22,16 +22,14 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+public:
+	// Called every frame
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 protected:
 	UFUNCTION()
 	bool Initialize();
 
-	UPROPERTY()
-	TObjectPtr<class AEnemySu33Pawn> CompOwner;
-	UPROPERTY()
-	TObjectPtr<class UWorld> World;
-
-protected:
 	UFUNCTION()
 	void UpdatePosition(float DeltaSeconds);
 	UFUNCTION()
@@ -41,6 +39,18 @@ protected:
 	UFUNCTION()
 	void UpdateRoll(float DeltaSeconds, float Roll);
 
+public:
+	UFUNCTION(BlueprintCallable)
+	void RequestRoll(bool bIsRollRight);
+	UFUNCTION(BlueprintCallable)
+	void RequestRollStabilize();
+
+protected:
+	UPROPERTY()
+	TObjectPtr<class AEnemySu33Pawn> CompOwner;
+	UPROPERTY()
+	TObjectPtr<class UWorld> World;
+
 	//Constants
 	UPROPERTY()
 	float MaxThrustSpeed = 10000.f;
@@ -49,15 +59,15 @@ protected:
 	UPROPERTY()
 	float ThrustMultiplier = 2500.f;
 	UPROPERTY()
-	float Gravity = 981.f;
+	float Gravity = 0.f;
 	UPROPERTY( )
 	float Drag = 0.25f;
 
 	//DynamicVariables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
-	float ThrustSpeed = 9500.f;
+	float ThrustSpeed = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
-	float CurrentSpeed = 9500.f;
+	float CurrentSpeed = 0.f;
 	//DynamicVariables
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float AppliedGravity = 0.f;
@@ -84,9 +94,6 @@ protected:
 	//UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	//float AileronScale = 0.f;			//Roll
 
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 		
 };

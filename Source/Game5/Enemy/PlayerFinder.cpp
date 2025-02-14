@@ -3,6 +3,7 @@
 
 #include "PlayerFinder.h"
 #include "EnemySu33Pawn.h"
+#include "EnemyPlaneController.h"
 
 // Sets default values for this component's properties
 UPlayerFinder::UPlayerFinder()
@@ -21,7 +22,12 @@ void UPlayerFinder::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	bComponentFlag = Initialize();
+	if (Initialize())
+	{
+		World->GetTimerManager().SetTimer(RelativePositionCheckTimer, FTimerDelegate::CreateLambda([this]() {
+			CompOwner->Decision = GetPlayerPositionRelativeToCompOwner();
+			}), 0.1f, true);
+	}
 }
 
 
@@ -29,8 +35,6 @@ void UPlayerFinder::BeginPlay()
 void UPlayerFinder::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
-	// ...
 }
 
 bool UPlayerFinder::Initialize()
@@ -43,10 +47,41 @@ bool UPlayerFinder::Initialize()
 	if (!CompOwner)
 		return false;
 
+	AIController = Cast<AEnemyPlaneController>(CompOwner->GetController());
+	if (!AIController)
+		return false;
+
 	Target = World->GetFirstPlayerController()->GetPawn();
 	if (!Target)
 		return false;
 
 	return true;
+}
+
+FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
+{
+	FPlayerRelativePosition Result = { false, false, false };
+
+	if (!Target || !CompOwner) return Result;
+
+	FVector OwnerLocation = CompOwner->GetActorLocation();
+	FVector TargetLocation = Target->GetActorLocation();
+
+	FVector DirectionToPlayer = (TargetLocation - OwnerLocation).GetSafeNormal();
+	FVector ForwardVector = CompOwner->GetActorForwardVector();
+	FVector UpVector = CompOwner->GetActorUpVector();
+
+	float DotForward = FVector::DotProduct(ForwardVector, DirectionToPlayer);
+	float DotUp = FVector::DotProduct(UpVector, DirectionToPlayer);
+	float CosAngle = FMath::Cos(FMath::RadiansToDegrees(ViewAngle));
+
+	Result.bIsInFront = DotForward > 0.f;
+	Result.bIsAbove = DotUp > 0.f;
+
+	bool bIsForwardInsight = (DotForward > CosAngle);
+	bool bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
+	Result.bIsInSight = bIsForwardInsight && bIsAboveInsight;
+
+	return Result;
 }
 

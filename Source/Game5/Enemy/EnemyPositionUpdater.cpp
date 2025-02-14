@@ -16,8 +16,6 @@ UEnemyPositionUpdater::UEnemyPositionUpdater()
 
 	// ...
 }
-
-
 // Called when the game starts
 void UEnemyPositionUpdater::BeginPlay()
 {
@@ -25,6 +23,32 @@ void UEnemyPositionUpdater::BeginPlay()
 
 	// ...
 	bComponentFlag = Initialize();
+}
+
+// Called every frame
+void UEnemyPositionUpdater::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+{
+	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+
+	if (bComponentFlag)
+	{
+		UpdatePosition(DeltaTime);
+
+		if (CompOwner->bPitchUp)
+			UpdatePitch(DeltaTime, 1.f);
+		if (CompOwner->bPitchDown)
+			UpdatePitch(DeltaTime, -1.f);
+
+		if (CompOwner->bRollLeft)
+			UpdateRoll(DeltaTime, -1.f);
+		if (CompOwner->bRollRight)
+			UpdateRoll(DeltaTime, 1.f);
+
+		if (CompOwner->bYawLeft)
+			UpdateYaw(DeltaTime, -1.f);
+		if (CompOwner->bYawRight)
+			UpdateYaw(DeltaTime, 1.f);
+	}
 }
 
 bool UEnemyPositionUpdater::Initialize()
@@ -85,28 +109,32 @@ void UEnemyPositionUpdater::UpdateRoll(float DeltaSeconds, float Roll)
 	CompOwner->AddActorLocalRotation(NewRotation, true);
 }
 
-
-// Called every frame
-void UEnemyPositionUpdater::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UEnemyPositionUpdater::RequestRoll(bool bIsRollRight)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (bIsRollRight)
+		CompOwner->bRollRight = true;
+	else
+		CompOwner->bRollLeft = true;
 
-	if (bComponentFlag)
-	{
-		UpdatePosition(DeltaTime);
-
-		if (CompOwner->bPitchUp)
-			UpdatePitch(DeltaTime, 1.f);
-		if (CompOwner->bPitchDown)
-			UpdatePitch(DeltaTime, -1.f);
-		if (CompOwner->bRollLeft)
-			UpdateRoll(DeltaTime, -1.f);
-		if (CompOwner->bRollRight)
-			UpdateRoll(DeltaTime, 1.f);
-		if (CompOwner->bYawLeft)
-			UpdateYaw(DeltaTime, -1.f);
-		if (CompOwner->bYawRight)
-			UpdateYaw(DeltaTime, 1.f);
-	}
+	FTimerHandle RollingTimer;
+	World->GetTimerManager().SetTimer(RollingTimer, FTimerDelegate::CreateLambda([this]() {
+		CompOwner->bRollRight = false;
+		CompOwner->bRollLeft = false;
+		}), 1.1f, false);
 }
 
+void UEnemyPositionUpdater::RequestRollStabilize()
+{
+	FRotator CurrentRotation = CompOwner->GetActorRotation();
+	float RollAngle = FMath::Abs(CurrentRotation.Roll);
+
+	if (RollAngle > 1.f)
+		CompOwner->bRollLeft = true;
+	else
+		CompOwner->bRollLeft = false;
+
+	if (RollAngle < -1.f)
+		CompOwner->bRollRight = true;
+	else
+		CompOwner->bRollRight = false;
+}
