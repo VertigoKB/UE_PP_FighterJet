@@ -10,7 +10,7 @@ UPlayerFinder::UPlayerFinder()
 {
 	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
 	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 
 	// ...
 }
@@ -32,10 +32,10 @@ void UPlayerFinder::BeginPlay()
 
 
 // Called every frame
-void UPlayerFinder::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-}
+//void UPlayerFinder::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+//{
+//	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+//}
 
 bool UPlayerFinder::Initialize()
 {
@@ -70,17 +70,23 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	FVector DirectionToPlayer = (TargetLocation - OwnerLocation).GetSafeNormal();
 	FVector ForwardVector = CompOwner->GetActorForwardVector();
 	FVector UpVector = CompOwner->GetActorUpVector();
+	FVector RightVector = CompOwner->GetActorRightVector();
 
 	float DotForward = FVector::DotProduct(ForwardVector, DirectionToPlayer);
 	float DotUp = FVector::DotProduct(UpVector, DirectionToPlayer);
+	float DotRight = FVector::DotProduct(RightVector, DirectionToPlayer);
+
 	float CosAngle = FMath::Cos(FMath::RadiansToDegrees(ViewAngle));
 
 	Result.bIsInFront = DotForward > 0.f;
 	Result.bIsAbove = DotUp > 0.f;
-
+	Result.bIsRight = DotRight > 0.f;
+	
 	bool bIsForwardInsight = (DotForward > CosAngle);
 	bool bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
-	Result.bIsInSight = bIsForwardInsight && bIsAboveInsight;
+	bool bIsLeftRightInsight = (DotRight < -CosAngle) && (DotRight > CosAngle);
+
+	Result.bIsInSight = bIsForwardInsight && bIsAboveInsight && bIsLeftRightInsight;
 
 	return Result;
 }

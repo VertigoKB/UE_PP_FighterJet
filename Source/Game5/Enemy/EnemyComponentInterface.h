@@ -15,6 +15,6 @@ class GAME5_API IEnemyComponentInterface
 	GENERATED_BODY()
 
 public:
-	virtual class UPlayerFinder* GetPlayerFinder() = 0;
-	virtual class UEnemyPositionUpdater* GetPositionUpdater() = 0;
+	virtual class UActorComponent* GetPlayerFinder() = 0;
+	virtual class UActorComponent* GetPositionUpdater() = 0;
 };

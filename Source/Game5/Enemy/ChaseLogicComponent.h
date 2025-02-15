@@ -4,51 +4,47 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "PlayerFinder.generated.h"
+#include "ChaseLogicComponent.generated.h"
+
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class GAME5_API UPlayerFinder : public UActorComponent
+class GAME5_API UChaseLogicComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:	
 	// Sets default values for this component's properties
-	UPlayerFinder();
+	UChaseLogicComponent();
 
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-	FTimerHandle RelativePositionCheckTimer;
-
 public:	
 	// Called every frame
-	//virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 
 protected:
 	UFUNCTION()
 	bool Initialize();
 
+protected:
+
+	UFUNCTION()
+	void AdjustPitch();
+	UFUNCTION()
+	void AdjustYaw();
+	UFUNCTION()
+	void RollManeuver(float DeltaTime);
 
 protected:
 	UPROPERTY()
 	TObjectPtr<class AEnemySu33Pawn> CompOwner;
-
-	UPROPERTY()
-	TObjectPtr<class AEnemyPlaneController> AIController;
-	
 	UPROPERTY()
 	TObjectPtr<class UWorld> World;
-
 	UPROPERTY()
-	TObjectPtr<AActor> Target;
+	TObjectPtr<class UEnemyPositionUpdater> PositionUpdater;
 
-protected:
-	UFUNCTION()
-	struct FPlayerRelativePosition GetPlayerPositionRelativeToCompOwner();
 
-	UPROPERTY()
-	float ViewAngle = 45.f;
-
-		
 };

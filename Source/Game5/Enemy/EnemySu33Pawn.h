@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
+#include "EnemyComponentInterface.h"
 #include "EnemySu33Pawn.generated.h"
 
 USTRUCT(BlueprintType)
@@ -16,16 +17,24 @@ struct FPlayerRelativePosition
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsAbove;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsRight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsInSight;
 };
 UCLASS()
-class GAME5_API AEnemySu33Pawn : public APawn
+class GAME5_API AEnemySu33Pawn : public APawn, public IEnemyComponentInterface
 {
 	GENERATED_BODY()
+
 
 public:
 	// Sets default values for this pawn's properties
 	AEnemySu33Pawn();
+public:
+	UFUNCTION()
+	virtual UActorComponent* GetPlayerFinder() override;
+	UFUNCTION()
+	virtual UActorComponent* GetPositionUpdater() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FPlayerRelativePosition Decision;
@@ -57,6 +66,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<class UPlayerFinder> PlayerFinder;
+
+	UPROPERTY()
+	TObjectPtr<class UChaseLogicComponent> ChaseComp;
 
 protected:
 	UPROPERTY()

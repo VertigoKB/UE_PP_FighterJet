@@ -126,14 +126,13 @@ void UEnemyPositionUpdater::RequestRoll(bool bIsRollRight)
 void UEnemyPositionUpdater::RequestRollStabilize()
 {
 	FRotator CurrentRotation = CompOwner->GetActorRotation();
-	float RollAngle = FMath::Abs(CurrentRotation.Roll);
 
-	if (RollAngle > 1.f)
+	if (CurrentRotation.Roll > 1.f)
 		CompOwner->bRollLeft = true;
 	else
 		CompOwner->bRollLeft = false;
 
-	if (RollAngle < -1.f)
+	if (CurrentRotation.Roll < -1.f)
 		CompOwner->bRollRight = true;
 	else
 		CompOwner->bRollRight = false;

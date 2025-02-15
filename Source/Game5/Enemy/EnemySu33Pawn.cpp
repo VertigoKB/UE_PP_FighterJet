@@ -12,7 +12,9 @@
 #include "../Player/F15Pawn.h"
 #include "EnemyPositionUpdater.h"
 #include "PlayerFinder.h"
+#include "ChaseLogicComponent.h"
 #include "EnemyPlaneController.h"
+
 
 // Sets default values
 AEnemySu33Pawn::AEnemySu33Pawn()
@@ -36,9 +38,20 @@ AEnemySu33Pawn::AEnemySu33Pawn()
 
 	PositionUpdater = CreateDefaultSubobject<UEnemyPositionUpdater>(TEXT("PositionUpdater"));
 	PlayerFinder = CreateDefaultSubobject<UPlayerFinder>(TEXT("PlayerFinder"));
+	ChaseComp = CreateDefaultSubobject<UChaseLogicComponent>(TEXT("ChaseComponent"));
 
 	AIControllerClass = AEnemyPlaneController::StaticClass();
 	bIsSpatiallyLoaded = false;
+}
+
+UActorComponent* AEnemySu33Pawn::GetPlayerFinder()
+{
+	return PlayerFinder;
+}
+
+UActorComponent* AEnemySu33Pawn::GetPositionUpdater()
+{
+	return PositionUpdater;
 }
 
 // Called when the game starts or when spawned
