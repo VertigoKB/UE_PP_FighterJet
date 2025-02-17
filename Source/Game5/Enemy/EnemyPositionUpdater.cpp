@@ -28,6 +28,7 @@ void UEnemyPositionUpdater::BeginPlay()
 		return;
 	}
 
+	//TryImmelmannTurn();
 }
 
 // Called every frame
@@ -51,6 +52,9 @@ void UEnemyPositionUpdater::TickComponent(float DeltaTime, ELevelTick TickType, 
 		UpdateYaw(DeltaTime, -1.f);
 	if (CompOwner->bYawRight)
 		UpdateYaw(DeltaTime, 1.f);
+
+	if (bTryStablize)
+		ExecuteStabilize();
 }
 
 bool UEnemyPositionUpdater::Initialize()
@@ -111,7 +115,7 @@ void UEnemyPositionUpdater::UpdateRoll(float DeltaSeconds, float Roll)
 	CompOwner->AddActorLocalRotation(NewRotation, true);
 }
 
-void UEnemyPositionUpdater::RequestRoll(bool bIsRollRight)
+void UEnemyPositionUpdater::TryRolling(bool bIsRollRight)
 {
 	if (bIsRollRight)
 		CompOwner->bRollRight = true;
@@ -122,35 +126,93 @@ void UEnemyPositionUpdater::RequestRoll(bool bIsRollRight)
 	World->GetTimerManager().SetTimer(RollingTimer, FTimerDelegate::CreateLambda([this]() {
 		CompOwner->bRollRight = false;
 		CompOwner->bRollLeft = false;
+		RollingDone.ExecuteIfBound();
 		}), 1.1f, false);
 }
 
-void UEnemyPositionUpdater::RequestRollStabilize()
+void UEnemyPositionUpdater::ExecuteStabilize()
 {
 	FRotator CurrentRotation = CompOwner->GetActorRotation();
 
-	if (CurrentRotation.Roll > 0.1f)
+	bool bRollLeftFlag = false;
+	bool bRollRightFlag = false;
+	bool bPitchDownFlag = false;
+	bool bPitchUpFlag = false;
+
+
+	if (CurrentRotation.Roll >= 0.1f)
+	{
 		CompOwner->bRollLeft = true;
+		bRollLeftFlag = false;
+	}
 	else
+	{
 		CompOwner->bRollLeft = false;
+		bRollLeftFlag = true;
+	}
 
-	if (CurrentRotation.Roll < -0.1f)
+	if (CurrentRotation.Roll <= -0.1f)
+	{
 		CompOwner->bRollRight = true;
+		bRollRightFlag = false;
+	}
 	else
+	{
 		CompOwner->bRollRight = false;
+		bRollRightFlag = true;
+	}
 
-	if (CurrentRotation.Pitch > 0.1f)
+	if (CurrentRotation.Pitch >= 0.1f)
+	{
 		CompOwner->bPitchDown = true;
+		bPitchDownFlag = false;
+	}
 	else
+	{
 		CompOwner->bPitchDown = false;
+		bPitchDownFlag = true;
+	}
 
-	if (CurrentRotation.Pitch < -0.1f)
+	if (CurrentRotation.Pitch <= -0.1f)
+	{
 		CompOwner->bPitchUp = true;
+		bPitchUpFlag = false;
+	}
 	else
+	{
 		CompOwner->bPitchUp = false;
+		bPitchUpFlag = true;
+	}
 
+	if (bTryStablize == true &&
+		bRollLeftFlag == true &&
+		bRollRightFlag == true &&
+		bPitchDownFlag == true &&
+		bPitchUpFlag == true)
+	{
+		bTryStablize = false;
+		StabilizeDone.ExecuteIfBound();
+	}
 }
 
-void UEnemyPositionUpdater::RequestCobraTurnManuever()
+void UEnemyPositionUpdater::TryImmelmannTurn()
 {
+	CompOwner->bPitchUp = true;
+
+	FTimerHandle CobraTimer;
+	World->GetTimerManager().SetTimer(CobraTimer, FTimerDelegate::CreateLambda([this]() {
+		CompOwner->bPitchUp = false;
+		ImmelmannTurnDone.ExecuteIfBound();
+		}), 2.24f, false);
+}
+
+void UEnemyPositionUpdater::TryPullUp()
+{
+	CompOwner->bPitchUp = true;
+
+	FTimerHandle PullUpTimer;
+	World->GetTimerManager().SetTimer(PullUpTimer, FTimerDelegate::CreateLambda([this]() {
+		CompOwner->bPitchUp = false;
+		PullUpDone.ExecuteIfBound();
+		}), 1.12f, false);
 }

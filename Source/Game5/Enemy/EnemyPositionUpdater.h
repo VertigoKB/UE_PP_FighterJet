@@ -6,6 +6,10 @@
 #include "Components/ActorComponent.h"
 #include "EnemyPositionUpdater.generated.h"
 
+DECLARE_DELEGATE(FRollingDone)
+DECLARE_DELEGATE(FPullUpDone)
+DECLARE_DELEGATE(FImmelmannTurnDone)
+DECLARE_DELEGATE(FStabilizeDone)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API UEnemyPositionUpdater : public UActorComponent
@@ -24,6 +28,12 @@ public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
+public:
+	FRollingDone RollingDone;
+	FPullUpDone PullUpDone;
+	FImmelmannTurnDone ImmelmannTurnDone;
+	FStabilizeDone StabilizeDone;
+
 protected:
 	UFUNCTION()
 	bool Initialize();
@@ -39,11 +49,16 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void RequestRoll(bool bIsRollRight);
+	void TryRolling(bool bIsRollRight);
 	UFUNCTION(BlueprintCallable)
-	void RequestRollStabilize();
+	void ExecuteStabilize();
 	UFUNCTION(BlueprintCallable)
-	void RequestCobraTurnManuever();
+	void TryImmelmannTurn();
+	UFUNCTION(BlueprintCallable)
+	void TryPullUp();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bTryStablize = false;
 
 protected:
 	UPROPERTY()
@@ -94,6 +109,7 @@ protected:
 	//UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	//float AileronScale = 0.f;			//Roll
 
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float Debug = 1.1f;
 		
 };

@@ -18,6 +18,14 @@ struct FPlayerRelativePosition
 	bool bIsAbove;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsRight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsForwardInsight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsAboveInsight;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsLeftRightInsight;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsInSight;
 };
@@ -36,8 +44,10 @@ public:
 	UFUNCTION()
 	virtual UActorComponent* GetPositionUpdater() override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FPlayerRelativePosition Decision;
+public:
+	UFUNCTION()
+	void InitFalseManeuverBoolean();
+
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -52,6 +62,9 @@ public:
 	bool bYawLeft = false;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bYawRight = false;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPlayerRelativePosition Decision;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -68,7 +81,7 @@ protected:
 	TObjectPtr<class UPlayerFinder> PlayerFinder;
 
 	UPROPERTY()
-	TObjectPtr<class UChaseLogicComponent> ChaseComp;
+	TObjectPtr<class UEnemyFSMComponent> FSMComponent;
 
 protected:
 	UPROPERTY()
@@ -84,5 +97,6 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 
 };

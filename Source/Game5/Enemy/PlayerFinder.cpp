@@ -82,11 +82,11 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	Result.bIsAbove = DotUp > 0.f;
 	Result.bIsRight = DotRight > 0.f;
 	
-	bool bIsForwardInsight = (DotForward > CosAngle);
-	bool bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
-	bool bIsLeftRightInsight = (DotRight < -CosAngle) && (DotRight > CosAngle);
+	Result.bIsForwardInsight = (DotForward > CosAngle);
+	Result.bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
+	Result.bIsLeftRightInsight = (DotRight < -CosAngle) && (DotRight > CosAngle);
 
-	Result.bIsInSight = bIsForwardInsight && bIsAboveInsight && bIsLeftRightInsight;
+	Result.bIsInSight = Result.bIsForwardInsight && Result.bIsAboveInsight && Result.bIsLeftRightInsight;
 
 	return Result;
 }
