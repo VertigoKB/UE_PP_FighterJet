@@ -16,8 +16,6 @@ public:
 	// Sets default values for this component's properties
 	UEnemyPositionUpdater();
 
-	UPROPERTY()
-	bool bComponentFlag = false;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -44,6 +42,8 @@ public:
 	void RequestRoll(bool bIsRollRight);
 	UFUNCTION(BlueprintCallable)
 	void RequestRollStabilize();
+	UFUNCTION(BlueprintCallable)
+	void RequestCobraTurnManuever();
 
 protected:
 	UPROPERTY()

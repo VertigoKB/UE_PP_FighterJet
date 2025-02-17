@@ -34,14 +34,6 @@ void UChaseLogicComponent::TickComponent(float DeltaTime, ELevelTick TickType, F
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (CompOwner->Decision.bIsInSight)
-	{
-		AdjustPitch();
-		AdjustYaw();
-	}
-	else
-		RollManeuver(DeltaTime);
-
 }
 
 bool UChaseLogicComponent::Initialize()

@@ -22,7 +22,12 @@ void UEnemyPositionUpdater::BeginPlay()
 	Super::BeginPlay();
 
 	// ...
-	bComponentFlag = Initialize();
+	if (!Initialize())
+	{
+		SetComponentTickEnabled(false);
+		return;
+	}
+
 }
 
 // Called every frame
@@ -30,25 +35,22 @@ void UEnemyPositionUpdater::TickComponent(float DeltaTime, ELevelTick TickType, 
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	if (bComponentFlag)
-	{
-		UpdatePosition(DeltaTime);
+	UpdatePosition(DeltaTime);
 
-		if (CompOwner->bPitchUp)
-			UpdatePitch(DeltaTime, 1.f);
-		if (CompOwner->bPitchDown)
-			UpdatePitch(DeltaTime, -1.f);
+	if (CompOwner->bPitchUp)
+		UpdatePitch(DeltaTime, 1.f);
+	if (CompOwner->bPitchDown)
+		UpdatePitch(DeltaTime, -1.f);
 
-		if (CompOwner->bRollLeft)
-			UpdateRoll(DeltaTime, -1.f);
-		if (CompOwner->bRollRight)
-			UpdateRoll(DeltaTime, 1.f);
+	if (CompOwner->bRollLeft)
+		UpdateRoll(DeltaTime, -1.f);
+	if (CompOwner->bRollRight)
+		UpdateRoll(DeltaTime, 1.f);
 
-		if (CompOwner->bYawLeft)
-			UpdateYaw(DeltaTime, -1.f);
-		if (CompOwner->bYawRight)
-			UpdateYaw(DeltaTime, 1.f);
-	}
+	if (CompOwner->bYawLeft)
+		UpdateYaw(DeltaTime, -1.f);
+	if (CompOwner->bYawRight)
+		UpdateYaw(DeltaTime, 1.f);
 }
 
 bool UEnemyPositionUpdater::Initialize()
@@ -127,13 +129,28 @@ void UEnemyPositionUpdater::RequestRollStabilize()
 {
 	FRotator CurrentRotation = CompOwner->GetActorRotation();
 
-	if (CurrentRotation.Roll > 1.f)
+	if (CurrentRotation.Roll > 0.1f)
 		CompOwner->bRollLeft = true;
 	else
 		CompOwner->bRollLeft = false;
 
-	if (CurrentRotation.Roll < -1.f)
+	if (CurrentRotation.Roll < -0.1f)
 		CompOwner->bRollRight = true;
 	else
 		CompOwner->bRollRight = false;
+
+	if (CurrentRotation.Pitch > 0.1f)
+		CompOwner->bPitchDown = true;
+	else
+		CompOwner->bPitchDown = false;
+
+	if (CurrentRotation.Pitch < -0.1f)
+		CompOwner->bPitchUp = true;
+	else
+		CompOwner->bPitchUp = false;
+
+}
+
+void UEnemyPositionUpdater::RequestCobraTurnManuever()
+{
 }
