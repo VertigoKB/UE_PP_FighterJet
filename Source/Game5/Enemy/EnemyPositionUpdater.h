@@ -49,7 +49,7 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void TryRolling(bool bIsRollRight);
+	void TryRolling(FName RollDirection);
 	UFUNCTION(BlueprintCallable)
 	void ExecuteStabilize();
 	UFUNCTION(BlueprintCallable)

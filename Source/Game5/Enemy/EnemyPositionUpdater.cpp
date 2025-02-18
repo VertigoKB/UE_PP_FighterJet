@@ -28,7 +28,6 @@ void UEnemyPositionUpdater::BeginPlay()
 		return;
 	}
 
-	//TryImmelmannTurn();
 }
 
 // Called every frame
@@ -115,11 +114,11 @@ void UEnemyPositionUpdater::UpdateRoll(float DeltaSeconds, float Roll)
 	CompOwner->AddActorLocalRotation(NewRotation, true);
 }
 
-void UEnemyPositionUpdater::TryRolling(bool bIsRollRight)
+void UEnemyPositionUpdater::TryRolling(FName RollDirection)
 {
-	if (bIsRollRight)
+	if (RollDirection == FName(TEXT("Right")))
 		CompOwner->bRollRight = true;
-	else
+	else if (RollDirection == FName(TEXT("Left")))
 		CompOwner->bRollLeft = true;
 
 	FTimerHandle RollingTimer;

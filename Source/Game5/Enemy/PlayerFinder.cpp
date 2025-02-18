@@ -26,6 +26,7 @@ void UPlayerFinder::BeginPlay()
 	{
 		World->GetTimerManager().SetTimer(RelativePositionCheckTimer, FTimerDelegate::CreateLambda([this]() {
 			CompOwner->Decision = GetPlayerPositionRelativeToCompOwner();
+			DistanceToTarget = CompOwner->GetDistanceTo(Target);
 			}), 0.1f, true);
 	}
 }
@@ -60,7 +61,7 @@ bool UPlayerFinder::Initialize()
 
 FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 {
-	FPlayerRelativePosition Result = { false, false, false };
+	FPlayerRelativePosition Result;
 
 	if (!Target || !CompOwner) return Result;
 
@@ -86,8 +87,10 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	Result.bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
 	Result.bIsLeftRightInsight = (DotRight < -CosAngle) && (DotRight > CosAngle);
 
-	Result.bIsInSight = Result.bIsForwardInsight && Result.bIsAboveInsight && Result.bIsLeftRightInsight;
+	Result.bIsInRange = DistanceToTarget <= EffectiveRange;
+	Result.bIsTooClose = DistanceToTarget <= TooCloseRange;
+
+	Result.bIsInSight = (Result.bIsForwardInsight && Result.bIsAboveInsight && Result.bIsLeftRightInsight);
 
 	return Result;
 }
-

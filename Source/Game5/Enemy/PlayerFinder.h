@@ -50,5 +50,12 @@ protected:
 	UPROPERTY()
 	float ViewAngle = 45.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DistanceToTarget = 0.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float EffectiveRange = 15000.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float TooCloseRange = 2500.f;
 		
 };

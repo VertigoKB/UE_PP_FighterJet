@@ -1,25 +1,31 @@
 #pragma once
 #include <functional>
+#include <mutex>
 
 class TDoOnce
 {
 private:
-	bool bHaseExcuted = false;
+	bool bHasExecuted = false;
+	std::mutex mx;
 
 public:
 	bool Execute(std::function<void()> Function)
 	{
-		if (bHaseExcuted)
+		std::lock_guard<std::mutex> Lock(mx);
+
+		if (bHasExecuted)
 			return false;
 
-		if (Function)
-			Function();
+		Function();
 
-		bHaseExcuted = true;
+		bHasExecuted = true;
 		return true;
 	}
+	
 	void Reset()
 	{
-		bHaseExcuted = false;
+		std::lock_guard<std::mutex> Lock(mx);
+
+		bHasExecuted = false;
 	}
 };

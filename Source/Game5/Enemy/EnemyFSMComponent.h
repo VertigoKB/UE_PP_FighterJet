@@ -4,14 +4,22 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "../CommonData/TDoOnce.h"
 #include "EnemyFSMComponent.generated.h"
+
+//Don't recycle this component.
+//This component made for separate code.
+//FSM Graph
+//https://miro.com/app/board/uXjVIe2wB5I=/
 
 UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
-	Stabilize = 0,
-	Maneuver,
-	Death
+	Idle = 0	UMETA(DisplayName = "Idle"),
+	Maneuver	UMETA(DisplayName = "Maneuver"),
+	Attack		UMETA(DisplayName = "Attack"),
+	Stabilize	UMETA(DisplayName = "Stabilize"),
+	Death		UMETA(DisplayName = "Death")
 };
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
@@ -38,13 +46,38 @@ protected:
 
 protected:
 	UFUNCTION()
-	void ExecuteStabilizeState();
+	void OnIdleTick();
 	UFUNCTION()
-	void ExecuteManeuverState();
+	void OnStabilizeTick();
+	UFUNCTION()
+	void OnManeuverTick();
+	UFUNCTION()
+	void OnAttackTick();
+	UFUNCTION()
+	void OnDeath();
 
 protected:
+	UFUNCTION()
+	void OnStabilizeOnce();
+	UFUNCTION()
+	void OnManeuverOnce();
+	UFUNCTION()
+	void OnAttackOnce();
+
+protected:
+	void ReceiveDelegateCall(bool* ReceiveTarget);
+
+protected:
+
+	UFUNCTION()
+	void IsTooClose();
+
+
+protected:
+	bool* TargetDone = nullptr;
+
 	UPROPERTY()
-	bool bRoolingDone = false;
+	bool bRollingDone = false;
 	UPROPERTY()
 	bool bPullUpDone = false;
 	UPROPERTY()
@@ -53,9 +86,20 @@ protected:
 	bool bStabilizeDone = false;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MaxManeuverTime = 3.f;
+	float MaxManeuverTime = 5.f;
 
-	EEnemyState State;
+	EEnemyState State = EEnemyState::Stabilize;
+
+	TDoOnce OnceManeuverNode;
+	TDoOnce OnceAttackNode;
+	TDoOnce OnceStabilizeNode;
+
+	TDoOnce OnceANode;
+	TDoOnce OnceBNode;
+	TDoOnce OnceCNode;
+
+	FTimerHandle RelativeLocGetter;
+	FTimerHandle ManeuverTimer;
 
 protected:
 	UPROPERTY()
@@ -69,11 +113,15 @@ protected:
 
 private:
 	inline void InitFalseDelegateBoolean() {
-		bRoolingDone = false;
+		bRollingDone = false;
 		bPullUpDone = false;
 		bImmelmannTurnDone = false;
 		bStabilizeDone = false;
 	}
+	inline void SetStateStabilize(float ElapsedTime, float MaxTime) {
+		if (ElapsedTime >= MaxTime)
+			State = EEnemyState::Stabilize;
+	}
 
-
+	float Debug = 0.f;
 };

@@ -28,6 +28,22 @@ struct FPlayerRelativePosition
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsInSight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsInRange;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsTooClose;
+
+	FPlayerRelativePosition() :
+		bIsInFront(false),
+		bIsAbove(false),
+		bIsRight(false),
+		bIsForwardInsight(false),
+		bIsAboveInsight(false),
+		bIsLeftRightInsight(false),
+		bIsInSight(false),
+		bIsInRange(false),
+		bIsTooClose(false) {}
 };
 UCLASS()
 class GAME5_API AEnemySu33Pawn : public APawn, public IEnemyComponentInterface
@@ -66,6 +82,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FPlayerRelativePosition Decision;
 
+public:
+	UPROPERTY(EditDefaultsOnly)
+	float Health = 100.f;
+
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UBoxComponent> Root;
@@ -77,10 +97,10 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UEnemyPositionUpdater> PositionUpdater;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UPlayerFinder> PlayerFinder;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UEnemyFSMComponent> FSMComponent;
 
 protected:
@@ -97,6 +117,5 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 
 };
