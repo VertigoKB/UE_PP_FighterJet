@@ -12,7 +12,6 @@
 #include "../Player/F15Pawn.h"
 #include "EnemyPositionUpdater.h"
 #include "PlayerFinder.h"
-#include "EnemyFSMComponent.h"
 #include "EnemyPlaneController.h"
 
 
@@ -38,20 +37,10 @@ AEnemySu33Pawn::AEnemySu33Pawn()
 
 	PositionUpdater = CreateDefaultSubobject<UEnemyPositionUpdater>(TEXT("PositionUpdater"));
 	PlayerFinder = CreateDefaultSubobject<UPlayerFinder>(TEXT("PlayerFinder"));
-	FSMComponent = CreateDefaultSubobject<UEnemyFSMComponent>(TEXT("ChaseComponent"));
+	//FSMComponent = CreateDefaultSubobject<UEnemyFSMComponent>(TEXT("ChaseComponent"));
 
 	AIControllerClass = AEnemyPlaneController::StaticClass();
 	bIsSpatiallyLoaded = false;
-}
-
-UActorComponent* AEnemySu33Pawn::GetPlayerFinder()
-{
-	return PlayerFinder;
-}
-
-UActorComponent* AEnemySu33Pawn::GetPositionUpdater()
-{
-	return PositionUpdater;
 }
 
 void AEnemySu33Pawn::InitFalseManeuverBoolean()

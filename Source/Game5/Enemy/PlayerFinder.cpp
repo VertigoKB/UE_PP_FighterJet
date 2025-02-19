@@ -68,29 +68,30 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	FVector OwnerLocation = CompOwner->GetActorLocation();
 	FVector TargetLocation = Target->GetActorLocation();
 
-	FVector DirectionToPlayer = (TargetLocation - OwnerLocation).GetSafeNormal();
+	FVector DirectionToPlayer = TargetLocation - OwnerLocation;
+	DirectionToPlayer.Normalize();
 	FVector ForwardVector = CompOwner->GetActorForwardVector();
 	FVector UpVector = CompOwner->GetActorUpVector();
 	FVector RightVector = CompOwner->GetActorRightVector();
 
-	float DotForward = FVector::DotProduct(ForwardVector, DirectionToPlayer);
-	float DotUp = FVector::DotProduct(UpVector, DirectionToPlayer);
-	float DotRight = FVector::DotProduct(RightVector, DirectionToPlayer);
+	float DotForward = ForwardVector.Dot(DirectionToPlayer);
+	float DotUp = UpVector.Dot(DirectionToPlayer);
+	float DotRight = RightVector.Dot(DirectionToPlayer);
 
-	float CosAngle = FMath::Cos(FMath::RadiansToDegrees(ViewAngle));
+	float CosAngle = FMath::Cos(FMath::DegreesToRadians(ViewAngle));
 
 	Result.bIsInFront = DotForward > 0.f;
 	Result.bIsAbove = DotUp > 0.f;
 	Result.bIsRight = DotRight > 0.f;
 	
-	Result.bIsForwardInsight = (DotForward > CosAngle);
-	Result.bIsAboveInsight = (DotUp  < -CosAngle) && (DotUp > CosAngle);
-	Result.bIsLeftRightInsight = (DotRight < -CosAngle) && (DotRight > CosAngle);
-
-	Result.bIsInRange = DistanceToTarget <= EffectiveRange;
+	//Result.bIsForwardInsight = (DotForward > CosAngle);
+	//Result.bIsAboveInsight = (-CosAngle < DotUp ) && (DotUp > CosAngle);
+	//Result.bIsLeftRightInsight = (-CosAngle < DotRight) && (DotRight > CosAngle);
+	//
+	//Result.bIsInRange = DistanceToTarget <= EffectiveRange;
 	Result.bIsTooClose = DistanceToTarget <= TooCloseRange;
 
-	Result.bIsInSight = (Result.bIsForwardInsight && Result.bIsAboveInsight && Result.bIsLeftRightInsight);
+	//Result.bIsInSight = (Result.bIsInFront && Result.bIsAboveInsight && Result.bIsLeftRightInsight);
 
 	return Result;
 }

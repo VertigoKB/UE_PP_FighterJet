@@ -27,11 +27,14 @@ void UEnemyFSMComponent::BeginPlay()
 		SetComponentTickEnabled(false);
 		return;
 	}
+	//FTimerHandle Temp;
+	//World->GetTimerManager().SetTimer(Temp, FTimerDelegate::CreateLambda([this]() {
+	//	IsTooClose();
+	//	}), 5.f, true);
 
-	FTimerHandle Temp;
-	World->GetTimerManager().SetTimer(Temp, FTimerDelegate::CreateLambda([this]() {
-		IsTooClose();
-		}), 10.f, true);
+	World->GetTimerManager().SetTimer(PosStateUpdater, FTimerDelegate::CreateLambda([this]() {
+		PosState = CompOwner->Decision;
+		}), 0.1f, true);
 
 }
 
@@ -68,6 +71,13 @@ void UEnemyFSMComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 	}
 	}
 
+	//if (PosState.bIsInRange == true &&
+	//	PosState.bIsInSight == true &&
+	//	PosState.bIsTooClose != true) {
+	//	State = EEnemyState::Attack;
+	//}
+
+
 	if (CompOwner->Health <= 0.f)
 		State = EEnemyState::Death;
 }
@@ -103,6 +113,7 @@ bool UEnemyFSMComponent::Initialize()
 		bStabilizeDone = true;
 		});
 
+
 	return true;
 }
 
@@ -114,14 +125,17 @@ void UEnemyFSMComponent::OnIdleTick()
 
 	OnceANode.Reset();
 	OnceBNode.Reset();
-	OnceCNode.Reset();						//DoOnce 리셋
+	OnceCNode.Reset();						//Reset all DoOnce
 
-	TargetDone = nullptr;
+	FloatConditionA = 0.f;
+	FloatConditionB = 0.f;
+	CompOperator = NAME_None;
+	DelegateDone = nullptr;
 
-	InitFalseDelegateBoolean();				//델리게이트 신호 초기화
-	CompOwner->InitFalseManeuverBoolean();	//조종간에서 손 떼
+	InitFalseDelegateBoolean();				//Reset all delegate receiver
+	CompOwner->InitFalseManeuverBoolean();	//Reset ai joystick
 
-	if (CompOwner->Health > 0.f)			//죽지 않았다면 다음 행동 개시
+	if (CompOwner->Health > 0.f)			//Execute next state if not die
 		State = EEnemyState::Maneuver;
 }
 
@@ -131,8 +145,11 @@ void UEnemyFSMComponent::OnStabilizeOnce()
 }
 void UEnemyFSMComponent::OnStabilizeTick()
 {
-	if (bStabilizeDone)
-		State = EEnemyState::Idle;
+	if (CompOwner->Health > 0.f)
+	{
+		if (bStabilizeDone)
+			State = EEnemyState::Idle;
+	}
 }
 
 void UEnemyFSMComponent::OnManeuverOnce()
@@ -141,7 +158,11 @@ void UEnemyFSMComponent::OnManeuverOnce()
 }
 void UEnemyFSMComponent::OnManeuverTick()
 {
-	ReceiveDelegateCall(TargetDone);
+	if (CompOwner->Health > 0.f)
+	{
+		ReceiveDelegateCall(DelegateDone);
+		CompareFloat(FloatConditionA, FloatConditionB, CompOperator);
+	}
 }
 
 void UEnemyFSMComponent::OnAttackOnce()
@@ -149,6 +170,10 @@ void UEnemyFSMComponent::OnAttackOnce()
 }
 void UEnemyFSMComponent::OnAttackTick()
 {
+	if (CompOwner->Health > 0.f)
+	{
+
+	}
 }
 
 
@@ -162,40 +187,84 @@ void UEnemyFSMComponent::ReceiveDelegateCall(bool* ReceiveTarget)
 	if (!ReceiveTarget)
 		return;
 
-	FPlayerRelativePosition RelativeState = CompOwner->Decision;
+	if (ReceiveTarget == &bRollingDone)
+	{
+		if (*ReceiveTarget)
+			OnceANode.Execute([&]() {
+			CompOwner->bPitchUp = true;
+			StopManeuveringWhenLimit();
+				});
 
-	if (*ReceiveTarget)
-		OnceANode.Execute([&]() { 
-
-		CompOwner->bPitchUp = true;
-		World->GetTimerManager().SetTimer(ManeuverTimer, FTimerDelegate::CreateLambda([this]() {
+		if (PosState.bIsInFront == true)
+		{
+			World->GetTimerManager().ClearTimer(ManeuverTimer);
 			State = EEnemyState::Stabilize;
-			}), MaxManeuverTime, false);
+		}
+	}
+	
+	if (ReceiveTarget == &bPullUpDone)
+	{
+		float CurrentAltitude = CompOwner->GetActorLocation().Z;
+		float TargetAltitude = Target->GetActorLocation().Z;
 
+		OnceANode.Execute([&]() {
+			StopManeuveringWhenLimit();
 			});
 
+		FloatConditionA = CurrentAltitude;
+		FloatConditionB = TargetAltitude;
+		CompOperator = FName(TEXT(">="));
+	}
+}
 
-	if (RelativeState.bIsInFront == true)
+void UEnemyFSMComponent::CompareFloat(float condA, float condB, FName CompOp)
+{
+	if (CompOp == NAME_None)
+		return;
+
+	if ( CompOp == FName(TEXT(">=")) &&
+		(condA >= condB))
 	{
 		World->GetTimerManager().ClearTimer(ManeuverTimer);
 		State = EEnemyState::Stabilize;
 	}
+}
 
-	
+void UEnemyFSMComponent::StopManeuveringWhenLimit()
+{
+	World->GetTimerManager().SetTimer(ManeuverTimer, FTimerDelegate::CreateLambda([this]() {
+		State = EEnemyState::Stabilize;
+		}), MaxManeuverTime, false);
 }
 
 void UEnemyFSMComponent::IsTooClose()
 {
-	FPlayerRelativePosition RelativeState = CompOwner->Decision;
-
-	if (RelativeState.bIsTooClose == true)		
+	if (PosState.bIsTooClose == true)		
 	{	//Player Too Close
 		
 		PositionUpdater->TryRolling(FName(TEXT("Left")));
-		TargetDone = &bRollingDone;	// Point TargetDone will prevent return in ReceiveDelegateCall(). The Function is tick action.
+		DelegateDone = &bRollingDone;	// Point TargetDone will prevent return in ReceiveDelegateCall(). The Function is tick action.
+	}
+	else //Player Not Close
+		IsAbove();
+}
+
+void UEnemyFSMComponent::IsAbove()
+{
+	if (PosState.bIsAbove == true)
+	{	//Player position in above
+		if (PosState.bIsAboveInsight == true)
+		{	//But player in sight
+
+		}
+		else
+		{	//But player not in sight
+			PositionUpdater->TryPullUp();
+			DelegateDone = &bPullUpDone;
+		}
 	}
 	else
-	{	//Player Not Close
+	{	//Player position in downside
 
 	}
 }

@@ -9,7 +9,7 @@
 
 ACutSceneSubCamera::ACutSceneSubCamera()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	bIsSpatiallyLoaded = false;
 
 	RootComp = CreateDefaultSubobject<USceneComponent>(TEXT("RootComp"));
@@ -29,7 +29,8 @@ void ACutSceneSubCamera::BeginPlay()
 		AActor* TempPlayer = GetWorld()->GetFirstPlayerController()->GetPawn();
 		Player = Cast<AF15Pawn>(TempPlayer);
 		SetOwner(Player);
-		}), 1.f, false);
+		SetActorTickEnabled(true);
+		}), 0.4f, false);
 }
 
 void ACutSceneSubCamera::Tick(float DeltaTime)

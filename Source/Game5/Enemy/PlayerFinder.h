@@ -47,8 +47,8 @@ protected:
 	UFUNCTION()
 	struct FPlayerRelativePosition GetPlayerPositionRelativeToCompOwner();
 
-	UPROPERTY()
-	float ViewAngle = 45.f;
+	UPROPERTY(EditDefaultsOnly)
+	float ViewAngle = 25.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DistanceToTarget = 0.f;
@@ -56,6 +56,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float EffectiveRange = 15000.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	float TooCloseRange = 2500.f;
+	float TooCloseRange = 3500.f;
 		
 };

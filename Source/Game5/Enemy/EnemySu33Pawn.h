@@ -5,48 +5,11 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Pawn.h"
 #include "EnemyComponentInterface.h"
+#include "../CommonData/PlayerRelativePosition.h"
 #include "EnemySu33Pawn.generated.h"
 
-USTRUCT(BlueprintType)
-struct FPlayerRelativePosition
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsInFront;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsAbove;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsRight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsForwardInsight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsAboveInsight;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsLeftRightInsight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsInSight;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsInRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsTooClose;
-
-	FPlayerRelativePosition() :
-		bIsInFront(false),
-		bIsAbove(false),
-		bIsRight(false),
-		bIsForwardInsight(false),
-		bIsAboveInsight(false),
-		bIsLeftRightInsight(false),
-		bIsInSight(false),
-		bIsInRange(false),
-		bIsTooClose(false) {}
-};
 UCLASS()
-class GAME5_API AEnemySu33Pawn : public APawn, public IEnemyComponentInterface
+class GAME5_API AEnemySu33Pawn : public APawn
 {
 	GENERATED_BODY()
 
@@ -54,11 +17,6 @@ class GAME5_API AEnemySu33Pawn : public APawn, public IEnemyComponentInterface
 public:
 	// Sets default values for this pawn's properties
 	AEnemySu33Pawn();
-public:
-	UFUNCTION()
-	virtual UActorComponent* GetPlayerFinder() override;
-	UFUNCTION()
-	virtual UActorComponent* GetPositionUpdater() override;
 
 public:
 	UFUNCTION()
@@ -100,8 +58,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TObjectPtr<class UPlayerFinder> PlayerFinder;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TObjectPtr<class UEnemyFSMComponent> FSMComponent;
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	//TObjectPtr<class UEnemyFSMComponent> FSMComponent;
 
 protected:
 	UPROPERTY()

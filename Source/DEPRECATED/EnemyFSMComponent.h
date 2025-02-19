@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "../CommonData/TDoOnce.h"
+#include "../CommonData/PlayerRelativePosition.h"
 #include "EnemyFSMComponent.generated.h"
 
 //Don't recycle this component.
@@ -12,15 +13,15 @@
 //FSM Graph
 //https://miro.com/app/board/uXjVIe2wB5I=/
 
-UENUM(BlueprintType)
-enum class EEnemyState : uint8
-{
-	Idle = 0	UMETA(DisplayName = "Idle"),
-	Maneuver	UMETA(DisplayName = "Maneuver"),
-	Attack		UMETA(DisplayName = "Attack"),
-	Stabilize	UMETA(DisplayName = "Stabilize"),
-	Death		UMETA(DisplayName = "Death")
-};
+//UENUM(BlueprintType)
+//enum class EEnemyState : uint8
+//{
+//	Idle = 0	UMETA(DisplayName = "Idle"),
+//	Maneuver	UMETA(DisplayName = "Maneuver"),
+//	Attack		UMETA(DisplayName = "Attack"),
+//	Stabilize	UMETA(DisplayName = "Stabilize"),
+//	Death		UMETA(DisplayName = "Death")
+//};
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API UEnemyFSMComponent : public UActorComponent
@@ -67,14 +68,27 @@ protected:
 protected:
 	void ReceiveDelegateCall(bool* ReceiveTarget);
 
+
+	UFUNCTION()
+	void CompareFloat(float condA, float condB, FName CompOp);
+	UFUNCTION()
+	void StopManeuveringWhenLimit();
+	
+
 protected:
 
 	UFUNCTION()
 	void IsTooClose();
+	UFUNCTION()
+	void IsAbove();
 
 
 protected:
-	bool* TargetDone = nullptr;
+	bool* DelegateDone = nullptr;
+	float FloatConditionA = 0.f;
+	float FloatConditionB = 0.f;
+	FName CompOperator = NAME_None;
+
 
 	UPROPERTY()
 	bool bRollingDone = false;
@@ -88,7 +102,11 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxManeuverTime = 5.f;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState State = EEnemyState::Stabilize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FPlayerRelativePosition PosState;
 
 	TDoOnce OnceManeuverNode;
 	TDoOnce OnceAttackNode;
@@ -100,6 +118,7 @@ protected:
 
 	FTimerHandle RelativeLocGetter;
 	FTimerHandle ManeuverTimer;
+	FTimerHandle PosStateUpdater;
 
 protected:
 	UPROPERTY()
@@ -122,6 +141,10 @@ private:
 		if (ElapsedTime >= MaxTime)
 			State = EEnemyState::Stabilize;
 	}
-
+	inline void SetMaxManeuverTimer() {
+		World->GetTimerManager().SetTimer(ManeuverTimer, FTimerDelegate::CreateLambda([this]() {
+			State = EEnemyState::Stabilize;
+			}), MaxManeuverTime, false);
+	}
 	float Debug = 0.f;
 };
