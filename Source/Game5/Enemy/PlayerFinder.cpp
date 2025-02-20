@@ -78,7 +78,7 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	float DotUp = UpVector.Dot(DirectionToPlayer);
 	float DotRight = RightVector.Dot(DirectionToPlayer);
 
-	float CosAngle = FMath::Cos(FMath::DegreesToRadians(ViewAngle));
+	//float CosAngle = FMath::DegreesToRadians(ViewAngle);//FMath::Cos(
 
 	Result.bIsInFront = DotForward > 0.f;
 	Result.bIsAbove = DotUp > 0.f;
@@ -87,7 +87,7 @@ FPlayerRelativePosition UPlayerFinder::GetPlayerPositionRelativeToCompOwner()
 	//Result.bIsForwardInsight = (DotForward > CosAngle);
 	//Result.bIsAboveInsight = (-CosAngle < DotUp ) && (DotUp > CosAngle);
 	//Result.bIsLeftRightInsight = (-CosAngle < DotRight) && (DotRight > CosAngle);
-	//
+	// 
 	//Result.bIsInRange = DistanceToTarget <= EffectiveRange;
 	Result.bIsTooClose = DistanceToTarget <= TooCloseRange;
 

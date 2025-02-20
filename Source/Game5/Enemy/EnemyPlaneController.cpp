@@ -17,8 +17,8 @@ AEnemyPlaneController::AEnemyPlaneController()
 	SetPerceptionComponent(*Intelligence);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 35000.f;
-	SightConfig->LoseSightRadius = 35000.f;
+	SightConfig->SightRadius = LockOnRange;
+	SightConfig->LoseSightRadius = LockOnRange;
 	SightConfig->PeripheralVisionAngleDegrees = 15.f;
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
@@ -51,6 +51,7 @@ void AEnemyPlaneController::BeginPlay()
 
 	GetWorld()->GetTimerManager().SetTimer(PosStateUpdater, FTimerDelegate::CreateLambda([this]() {
 		PosState = MyPawn->Decision;
+		DistanceToTarget = MyPawn->GetDistanceTo(Target);
 		}), 0.1f, true);
 
 }
@@ -78,6 +79,12 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 	{
 		OnceStabilizeNode.Execute([&]() { OnStabilizeOnce(); });
 		OnStabilizeTick();
+		break;
+	}	
+	case EEnemyState::Search:
+	{
+		OnceSearchNode.Execute([&]() { OnSearchOnce(); });
+		OnSearchTick();
 		break;
 	}
 	case EEnemyState::Attack:
@@ -118,7 +125,8 @@ bool AEnemyPlaneController::Initialize()
 	if (!MyPawn)
 		return false;
 
-	Target = GetWorld()->GetFirstPlayerController()->GetPawn();
+	if (!Target)
+		Target = GetWorld()->GetFirstPlayerController()->GetPawn();
 	if (!Target)
 		return false;
 
@@ -147,6 +155,7 @@ void AEnemyPlaneController::OnIdleTick()
 	OnceManeuverNode.Reset();
 	OnceAttackNode.Reset();
 	OnceStabilizeNode.Reset();
+	OnceSearchNode.Reset();
 
 	OnceANode.Reset();
 	OnceBNode.Reset();
@@ -157,12 +166,18 @@ void AEnemyPlaneController::OnIdleTick()
 	CompOperator = NAME_None;
 	DelegateDone = nullptr;
 
-	InitFalseDelegateBoolean();				//Reset all delegate receiver
+	//InitFalseDelegateBoolean();				//Reset all delegate receiver
+	bRollingDone = false;
+	bPullUpDone = false;
+	bImmelmannTurnDone = false;
+	bStabilizeDone = false;
 	MyPawn->InitFalseManeuverBoolean();	//Reset ai joystick
 
 	if (bLockable &&
 		!PosState.bIsTooClose)
 		State = EEnemyState::Attack;
+	else
+		State = EEnemyState::Maneuver;
 }
 
 void AEnemyPlaneController::OnStabilizeOnce()
@@ -177,7 +192,18 @@ void AEnemyPlaneController::OnStabilizeTick()
 
 void AEnemyPlaneController::OnManeuverOnce()
 {
-	IsTooClose();
+	if (!bManeuverStateForImmelmann)
+	{
+		IsTooFar();
+		return;
+	}
+	else
+	{ 
+		PositionUpdater->TryImmelmannTurn();
+		DelegateDone = &bImmelmannTurnDone;
+		UE_LOG(LogTemp, Warning, TEXT("Search Immelmann"))
+	}
+
 }
 void AEnemyPlaneController::OnManeuverTick()
 {
@@ -187,10 +213,52 @@ void AEnemyPlaneController::OnManeuverTick()
 
 void AEnemyPlaneController::OnAttackOnce()
 {
+	FTimerHandle Temp;
+	GetWorldTimerManager().SetTimer(Temp, FTimerDelegate::CreateLambda([&]() {
+		State = EEnemyState::Stabilize;
+		}), 5.f, false);
 }
 void AEnemyPlaneController::OnAttackTick()
 {
 
+}
+
+void AEnemyPlaneController::OnSearchOnce()
+{
+}
+void AEnemyPlaneController::OnSearchTick()
+{
+	if (PosState.bIsAbove)
+	{
+		MyPawn->bPitchUp = true;
+		MyPawn->bPitchDown = false;
+	}
+	else
+	{
+		MyPawn->bPitchUp = false;
+		MyPawn->bPitchDown = true;
+	}
+
+	if (PosState.bIsRight)
+	{
+		MyPawn->bYawRight = true;
+		MyPawn->bYawLeft = false;
+	}
+	else
+	{
+		MyPawn->bYawRight = false;
+		MyPawn->bYawLeft = true;
+	}
+
+	if (PosState.bIsInFront)
+	{
+		//아무것도 안한다.
+	}
+	else
+	{	//해당 상태에서 나와 뒤로 가는 기동을 해야함.
+		bManeuverStateForImmelmann = true;
+		State = EEnemyState::Maneuver;
+	}
 }
 
 void AEnemyPlaneController::OnDeath()
@@ -210,10 +278,10 @@ void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)
 			StopManeuveringWhenLimit();
 				});
 
-		if (PosState.bIsInFront == true)
+		if (bLockable)
 		{
 			GetWorld()->GetTimerManager().ClearTimer(ManeuverTimer);
-			State = EEnemyState::Stabilize;
+			State = EEnemyState::Attack;
 		}
 	}
 
@@ -229,6 +297,18 @@ void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)
 		FloatConditionA = CurrentAltitude;
 		FloatConditionB = TargetAltitude;
 		CompOperator = FName(TEXT(">="));
+	}
+	
+	if (ReceiveTarget == &bImmelmannTurnDone)
+	{
+		if (*ReceiveTarget)
+			State = EEnemyState::Stabilize;
+	}
+
+	if (bLockable)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ManeuverTimer);
+		State = EEnemyState::Attack;
 	}
 }
 
@@ -252,13 +332,25 @@ void AEnemyPlaneController::StopManeuveringWhenLimit()
 		}), MaxManeuverTime, false);
 }
 
+void AEnemyPlaneController::IsTooFar()
+{
+	if (DistanceToTarget > LockOnRange)
+	{	//Player too far
+		State = EEnemyState::Search;
+		UE_LOG(LogTemp, Warning, TEXT("Too Far!"))
+	}
+	else
+	{	//Player in range
+		IsTooClose();
+	}
+}
+
 void AEnemyPlaneController::IsTooClose()
 {
 	if (PosState.bIsTooClose == true)
 	{	//Player Too Close
-
-		PositionUpdater->TryRolling(FName(TEXT("Left")));
-		DelegateDone = &bRollingDone;	// Point TargetDone will prevent return in ReceiveDelegateCall(). The Function is tick action.
+		RequestRolling(FName(TEXT("Left")));
+		UE_LOG(LogTemp, Warning, TEXT("Too Close"))
 	}
 	else //Player Not Close
 		IsAbove();
@@ -271,11 +363,13 @@ void AEnemyPlaneController::IsAbove()
 		if (bLockable)
 		{	//But player in sight
 			State = EEnemyState::Attack;
+			UE_LOG(LogTemp, Warning, TEXT("Not Close / Above / Lockable!"))
 		}
 		else
 		{	//But player not in sight
 			PositionUpdater->TryPullUp();
 			DelegateDone = &bPullUpDone;
+			UE_LOG(LogTemp, Warning, TEXT("Not Close / Above / I Cant Lock!"))
 		}
 	}
 	else //Player position in downside
@@ -286,10 +380,65 @@ void AEnemyPlaneController::IsFront()
 {
 	if (PosState.bIsInFront == true)
 	{	//Player position in front
-
+		if (bLockable)
+		{	//But player in sight.
+			State = EEnemyState::Attack;
+			UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Front / Lockable!"))
+		}
+		else
+		{	//But player not in sight.
+			if (PosState.bIsRight == true)
+			{	//And player position in Right.
+				RequestRolling(FName(TEXT("Right")));
+				UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Front / Cant Lock / Right "))
+			}
+			else
+			{	//And player position in Left.
+				RequestRolling(FName(TEXT("Left")));
+				UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Front / Cant Lock / Left "))
+			}
+		}
 	}
 	else
 	{	//Player position in rear
-
+		if (DistanceToTarget > LockOnRange)
+		{	//And Player too far.
+			PositionUpdater->TryImmelmannTurn();
+			DelegateDone = &bImmelmannTurnDone;
+			UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Back / Too far "))
+		}
+		else
+		{	//And Player position in sight range.
+			if (PosState.bIsRight == true)
+			{	//Also player in right
+				RequestRolling(FName(TEXT("Right")));
+				UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Back / InRange / Right "))
+			}
+			else
+			{	//Also player in left
+				RequestRolling(FName(TEXT("Left")));
+				UE_LOG(LogTemp, Warning, TEXT("Not Close / Not Above / Back / InRange / Left "))
+			}
+		}
 	}
+}
+
+void AEnemyPlaneController::RequestRolling(FName Direction)
+{
+	if (Direction == FName(TEXT("Left")))
+		PositionUpdater->TryRolling(Direction);
+	else if (Direction == FName(TEXT("Right")))
+		PositionUpdater->TryRolling(Direction);
+	else
+		return;
+
+	DelegateDone = &bRollingDone;
+}
+
+void AEnemyPlaneController::InitFalseDelegateBoolean() 
+{
+	bRollingDone = false;
+	bPullUpDone = false;
+	bImmelmannTurnDone = false;
+	bStabilizeDone = false;
 }

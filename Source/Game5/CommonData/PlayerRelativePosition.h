@@ -18,6 +18,9 @@ public:
 	bool bIsRight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsLeftRightInsight;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsTooClose;
 
 	FPlayerRelativePosition() :

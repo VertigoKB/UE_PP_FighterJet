@@ -22,6 +22,7 @@ enum class EEnemyState : uint8
 	Maneuver	UMETA(DisplayName = "Maneuver"),
 	Attack		UMETA(DisplayName = "Attack"),
 	Stabilize	UMETA(DisplayName = "Stabilize"),
+	Search		UMETA(DisplayName = "Search"),
 	Death		UMETA(DisplayName = "Death")
 };
 
@@ -54,6 +55,8 @@ protected:
 	UFUNCTION()
 	void OnAttackTick();
 	UFUNCTION()
+	void OnSearchTick();
+	UFUNCTION()
 	void OnDeath();
 
 protected:
@@ -63,6 +66,8 @@ protected:
 	void OnManeuverOnce();
 	UFUNCTION()
 	void OnAttackOnce();
+	UFUNCTION()
+	void OnSearchOnce();
 
 protected:
 	void ReceiveDelegateCall(bool* ReceiveTarget);
@@ -77,6 +82,8 @@ protected:
 protected:
 
 	UFUNCTION()
+	void IsTooFar();
+	UFUNCTION()
 	void IsTooClose();
 	UFUNCTION()
 	void IsAbove();
@@ -84,11 +91,20 @@ protected:
 	void IsFront();
 
 
+	UFUNCTION()
+	void RequestRolling(FName Direction);
+
+
 protected:
+	// Point TargetDone will prevent return in ReceiveDelegateCall().The Function is tick action.
 	bool* DelegateDone = nullptr;
+
+	bool bManeuverStateForImmelmann = false;
+
+	// Initialize CompOperator will prevent return in CompareFloat().The Function is tick action.
+	FName CompOperator = NAME_None;
 	float FloatConditionA = 0.f;
 	float FloatConditionB = 0.f;
-	FName CompOperator = NAME_None;
 
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
 	bool bLockable = false;
@@ -105,6 +121,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float MaxManeuverTime = 5.f;
 
+	UPROPERTY()
+	float DistanceToTarget = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float LockOnRange = 35000.f;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState State = EEnemyState::Stabilize;
 
@@ -114,6 +136,7 @@ protected:
 	TDoOnce OnceManeuverNode;
 	TDoOnce OnceAttackNode;
 	TDoOnce OnceStabilizeNode;
+	TDoOnce OnceSearchNode;
 
 	TDoOnce OnceANode;
 	TDoOnce OnceBNode;
@@ -138,18 +161,7 @@ protected:
 	TObjectPtr<UAISenseConfig_Sight> SightConfig;
 
 private:
-	inline void InitFalseDelegateBoolean() {
-		bRollingDone = false;
-		bPullUpDone = false;
-		bImmelmannTurnDone = false;
-		bStabilizeDone = false;
-	}
-
-	inline void SetMaxManeuverTimer() {
-		GetWorld()->GetTimerManager().SetTimer(ManeuverTimer, FTimerDelegate::CreateLambda([this]() {
-			State = EEnemyState::Stabilize;
-			}), MaxManeuverTime, false);
-	}
+	void InitFalseDelegateBoolean();
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
