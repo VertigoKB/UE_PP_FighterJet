@@ -28,8 +28,6 @@ AEnemyPlaneController::AEnemyPlaneController()
 	Intelligence->ConfigureSense(*SightConfig);
 	Intelligence->SetDominantSense(SightConfig->GetSenseImplementation());
 
-	
-
 	State = EEnemyState::Stabilize;
 }
 
