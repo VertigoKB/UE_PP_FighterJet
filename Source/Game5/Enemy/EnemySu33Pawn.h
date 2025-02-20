@@ -22,7 +22,6 @@ public:
 	UFUNCTION()
 	void InitFalseManeuverBoolean();
 
-
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bPitchUp = false;

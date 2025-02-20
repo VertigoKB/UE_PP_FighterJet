@@ -17,8 +17,8 @@ AEnemyPlaneController::AEnemyPlaneController()
 	SetPerceptionComponent(*Intelligence);
 
 	SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
-	SightConfig->SightRadius = 15000.f;
-	SightConfig->LoseSightRadius = 15000.f;
+	SightConfig->SightRadius = 35000.f;
+	SightConfig->LoseSightRadius = 35000.f;
 	SightConfig->PeripheralVisionAngleDegrees = 15.f;
 
 	SightConfig->DetectionByAffiliation.bDetectEnemies = true;
@@ -59,6 +59,9 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (MyPawn->Health <= 0.f)
+		State = EEnemyState::Death;
+
 	switch (State)
 	{
 	case EEnemyState::Idle:
@@ -71,17 +74,16 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 		OnceManeuverNode.Execute([&]() { OnManeuverOnce(); });
 		OnManeuverTick();
 		break;
+	}case EEnemyState::Stabilize:
+	{
+		OnceStabilizeNode.Execute([&]() { OnStabilizeOnce(); });
+		OnStabilizeTick();
+		break;
 	}
 	case EEnemyState::Attack:
 	{
 		OnceAttackNode.Execute([&]() { OnAttackOnce(); });
 		OnAttackTick();
-		break;
-	}
-	case EEnemyState::Stabilize:
-	{
-		OnceStabilizeNode.Execute([&]() { OnStabilizeOnce(); });
-		OnStabilizeTick();
 		break;
 	}
 	}
@@ -91,20 +93,22 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 	//	PosState.bIsTooClose != true) {
 	//	State = EEnemyState::Attack;
 	//}
+	
 
-
-	if (MyPawn->Health <= 0.f)
-		State = EEnemyState::Death;
 }
 
 void AEnemyPlaneController::OnTargetPerceptionUpdated(AActor* Actor, FAIStimulus Stimulus)
 {
-	bDebugBoolean = Stimulus.WasSuccessfullySensed();
-
-	if (Actor->Tags.Num() > 0)
+ 	if (Stimulus.WasSuccessfullySensed() &&
+		Actor->Tags.Num() > 0)
 	{
-		MyDebugName = Actor->Tags[0];
+		if (Actor->Tags[0] == FName(TEXT("Player")))
+			bLockable = true;
+		else
+			bLockable = false;
 	}
+	else
+		bLockable = false;
 }
 
 bool AEnemyPlaneController::Initialize()
@@ -135,7 +139,6 @@ bool AEnemyPlaneController::Initialize()
 		bStabilizeDone = true;
 		});
 
-
 	return true;
 }
 
@@ -157,8 +160,9 @@ void AEnemyPlaneController::OnIdleTick()
 	InitFalseDelegateBoolean();				//Reset all delegate receiver
 	MyPawn->InitFalseManeuverBoolean();	//Reset ai joystick
 
-	if (MyPawn->Health > 0.f)			//Execute next state if not die
-		State = EEnemyState::Maneuver;
+	if (bLockable &&
+		!PosState.bIsTooClose)
+		State = EEnemyState::Attack;
 }
 
 void AEnemyPlaneController::OnStabilizeOnce()
@@ -167,24 +171,18 @@ void AEnemyPlaneController::OnStabilizeOnce()
 }
 void AEnemyPlaneController::OnStabilizeTick()
 {
-	if (MyPawn->Health > 0.f)
-	{
-		if (bStabilizeDone)
-			State = EEnemyState::Idle;
-	}
+	if (bStabilizeDone)
+		State = EEnemyState::Idle;
 }
 
 void AEnemyPlaneController::OnManeuverOnce()
 {
-	//IsTooClose();
+	IsTooClose();
 }
 void AEnemyPlaneController::OnManeuverTick()
 {
-	if (MyPawn->Health > 0.f)
-	{
-		ReceiveDelegateCall(DelegateDone);
-		CompareFloat(FloatConditionA, FloatConditionB, CompOperator);
-	}
+	ReceiveDelegateCall(DelegateDone);
+	CompareFloat(FloatConditionA, FloatConditionB, CompOperator);
 }
 
 void AEnemyPlaneController::OnAttackOnce()
@@ -192,10 +190,7 @@ void AEnemyPlaneController::OnAttackOnce()
 }
 void AEnemyPlaneController::OnAttackTick()
 {
-	if (MyPawn->Health > 0.f)
-	{
 
-	}
 }
 
 void AEnemyPlaneController::OnDeath()
@@ -272,10 +267,10 @@ void AEnemyPlaneController::IsTooClose()
 void AEnemyPlaneController::IsAbove()
 {
 	if (PosState.bIsAbove == true)
-	{	//Player position in above
-		if (true)
+	{	//Player position in above 
+		if (bLockable)
 		{	//But player in sight
-
+			State = EEnemyState::Attack;
 		}
 		else
 		{	//But player not in sight
@@ -283,8 +278,18 @@ void AEnemyPlaneController::IsAbove()
 			DelegateDone = &bPullUpDone;
 		}
 	}
+	else //Player position in downside
+		IsFront();
+}
+
+void AEnemyPlaneController::IsFront()
+{
+	if (PosState.bIsInFront == true)
+	{	//Player position in front
+
+	}
 	else
-	{	//Player position in downside
+	{	//Player position in rear
 
 	}
 }

@@ -78,11 +78,14 @@ protected:
 	UPROPERTY( )
 	float Drag = 0.25f;
 
+public:
 	//DynamicVariables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
+
+protected:
 	//DynamicVariables
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float AppliedGravity = 0.f;

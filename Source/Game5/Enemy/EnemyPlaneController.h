@@ -80,6 +80,8 @@ protected:
 	void IsTooClose();
 	UFUNCTION()
 	void IsAbove();
+	UFUNCTION()
+	void IsFront();
 
 
 protected:
@@ -88,6 +90,8 @@ protected:
 	float FloatConditionB = 0.f;
 	FName CompOperator = NAME_None;
 
+	UPROPERTY(VisibleDefaultsOnly, BlueprintReadWrite)
+	bool bLockable = false;
 
 	UPROPERTY()
 	bool bRollingDone = false;
@@ -149,7 +153,7 @@ private:
 
 protected:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	bool bDebugBoolean = 0.f;
+	bool bDebugBoolean = false;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	FName MyDebugName = NAME_None;
 };

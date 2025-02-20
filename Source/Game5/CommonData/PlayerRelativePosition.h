@@ -17,6 +17,19 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bIsRight;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool bIsTooClose;
+
+	FPlayerRelativePosition() :
+		bIsInFront(false),
+		bIsAbove(false),
+		bIsRight(false),
+		bIsTooClose(false) {}
+};
+
+/*
+	DEPRECATED
+
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//bool bIsForwardInsight;
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
@@ -28,18 +41,11 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	//bool bIsInRange;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	bool bIsTooClose;
 
-
-	FPlayerRelativePosition() :
-		bIsInFront(false),
-		bIsAbove(false),
-		bIsRight(false),
 		//bIsForwardInsight(false),
 		//bIsAboveInsight(false),
 		//bIsLeftRightInsight(false),
 		//bIsInSight(false),
 		//bIsInRange(false),
-		bIsTooClose(false) {}
-};
+
+*/
