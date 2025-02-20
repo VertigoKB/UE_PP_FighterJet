@@ -226,36 +226,34 @@ void AEnemyPlaneController::OnSearchOnce()
 }
 void AEnemyPlaneController::OnSearchTick()
 {
-	if (PosState.bIsAbove)
-	{
-		MyPawn->bPitchUp = true;
-		MyPawn->bPitchDown = false;
-	}
-	else
-	{
-		MyPawn->bPitchUp = false;
-		MyPawn->bPitchDown = true;
-	}
-
-	if (PosState.bIsRight)
-	{
-		MyPawn->bYawRight = true;
-		MyPawn->bYawLeft = false;
-	}
-	else
-	{
-		MyPawn->bYawRight = false;
-		MyPawn->bYawLeft = true;
-	}
-
 	if (PosState.bIsInFront)
 	{
-		//아무것도 안한다.
+		if (PosState.bIsAbove)
+		{
+			MyPawn->bPitchUp = true;
+			MyPawn->bPitchDown = false;
+		}
+		else
+		{
+			MyPawn->bPitchUp = false;
+			MyPawn->bPitchDown = true;
+		}
+
+		if (PosState.bIsRight)
+		{
+			MyPawn->bYawRight = true;
+			MyPawn->bYawLeft = false;
+		}
+		else
+		{
+			MyPawn->bYawRight = false;
+			MyPawn->bYawLeft = true;
+		}
 	}
 	else
-	{	//해당 상태에서 나와 뒤로 가는 기동을 해야함.
+	{
 		bManeuverStateForImmelmann = true;
-		State = EEnemyState::Maneuver;
+		State = EEnemyState::Stabilize;
 	}
 }
 
@@ -300,7 +298,10 @@ void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)
 	if (ReceiveTarget == &bImmelmannTurnDone)
 	{
 		if (*ReceiveTarget)
+		{
+			bManeuverStateForImmelmann = false;
 			State = EEnemyState::Stabilize;
+		}
 	}
 
 	if (bLockable)
