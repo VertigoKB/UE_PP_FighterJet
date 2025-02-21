@@ -106,7 +106,7 @@ protected:	//Input, Control Surfaces Animation
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
-	float MaxThrustSpeed = 10000.f;
+	float MaxThrustSpeed = 30000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
@@ -126,9 +126,9 @@ protected:	//Input, Control Surfaces Animation
 public:
 	//DynamicVariables	//UHoldingDataComp need to access
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
-	float ThrustSpeed = 9500.f;
+	float ThrustSpeed = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
-	float CurrentSpeed = 9500.f;
+	float CurrentSpeed = 0.f;
 
 protected:
 	//DynamicVariables

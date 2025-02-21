@@ -125,7 +125,7 @@ protected:
 	float DistanceToTarget = 0.f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float LockOnRange = 35000.f;
+	float LockOnRange = 50000.f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	EEnemyState State = EEnemyState::Stabilize;
