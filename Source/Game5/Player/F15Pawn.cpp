@@ -74,12 +74,6 @@ AF15Pawn::AF15Pawn()
 	CockpitCamera->SetupAttachment(BoxRoot);
 	CockpitCamera->SetRelativeLocation(FVector(500.f, 0.f, 140.f));
 
-	CutSceneCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("CutSceneCamera"));
-	CutSceneCamera->SetupAttachment(BoxRoot);
-	CutSceneCamera->SetRelativeLocation(FVector(545.f, 635.f, 0.f));
-	FRotator SceneCameraRotation = FRotator(0.f, -120.f, 0.f);
-	CutSceneCamera->SetRelativeRotation(SceneCameraRotation.Quaternion());
-
 	InputRotateComponent = CreateDefaultSubobject<UFighterRotateComponent>(TEXT("InputRotateComponent"));
 
 	Tags.Add(FName("Player"));
@@ -99,6 +93,17 @@ void AF15Pawn::BeginPlay()
 	if (CockpitCamera)
 		CockpitCamera->Deactivate();
 
+	GetWorldTimerManager().SetTimer(HudValueExecuter, FTimerDelegate::CreateLambda([&]() {
+		float RawZ = GetActorLocation().Z;
+		float MappedZ = RawZ / 304.8f;
+		if (MappedZ < 0.f)
+			MappedZ = 0.f;
+		if (MappedZ > 9999.f)
+			MappedZ = 9999.f;
+			
+		float MappedThrust = (ThrustSpeed / MaxThrustSpeed) * 650.f;
+		OnReceiveHudValue.ExecuteIfBound(MappedThrust, MappedZ);
+		}), 0.1f, true);
 	
 }
 
@@ -184,6 +189,9 @@ void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 //Update PawnTransform
 void AF15Pawn::UpdatePosition(float DeltaSeconds)
 {
+	if (ThrustSpeed > 0.f)
+		ThrustSpeed -= 2.3f;
+
 	if (ThrustSpeed < CurrentSpeed)
 		CurrentSpeed = FMath::FInterpTo(CurrentSpeed, ThrustSpeed, DeltaSeconds, Drag);
 	else
@@ -211,34 +219,6 @@ void AF15Pawn::MissileAction()
 		Interface->Execute_MissileLaunch(LoadedMissiles[Index], Index);
 		IsMissileEmpty[Index] = true;
 		LoadedMissiles[Index] = nullptr;
-	}
-}
-
-void AF15Pawn::CameraChange(ECameraType Type)
-{
-	switch (Type)
-	{
-	case ECameraType::Main:
-	{
-		Camera->Activate();
-		CockpitCamera->Deactivate();
-		CutSceneCamera->Deactivate();
-		break;
-	}
-	case ECameraType::Cockpit:
-	{
-		CockpitCamera->Activate();
-		Camera->Deactivate();
-		CutSceneCamera->Deactivate();
-		break;
-	}
-	case ECameraType::CutScene:
-	{
-		CutSceneCamera->Activate();
-		CockpitCamera->Deactivate();
-		Camera->Deactivate();
-		break;
-	}
 	}
 }
 

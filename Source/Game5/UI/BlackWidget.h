@@ -18,7 +18,11 @@ protected:
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void PlayFadeEffect(bool bIsFadeIn);
+	void PlayFadeIn();
+
+	UFUNCTION(BlueprintCallable)
+	void PlayFadeOut();
+
 
 	UPROPERTY(meta = (BindWidget))
 	class UImage* BlackImage;

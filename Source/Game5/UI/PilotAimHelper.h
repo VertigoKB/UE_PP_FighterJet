@@ -27,6 +27,9 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void RefelectDataToImage();
 
+protected:
+	UPROPERTY()
+	TObjectPtr<class APlayerHUD> CachedHud;
 	
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

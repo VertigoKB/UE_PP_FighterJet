@@ -164,6 +164,9 @@ void UHoldingDataComp::SetUpdaterTimerWhenCountZero()
 			WorldGameInst->RequestMoveCountIncrement();
 			Hud->GeneratedBlackWidget->PlayFadeEffect(false);
 
+			TheWorld->GetTimerManager().ClearTimer(Player->HudValueExecuter);
+			Player->HudValueExecuter.Invalidate();
+			
 			FTimerHandle WaitFadeAnimEnd;
 			float EndTime = Hud->GeneratedBlackWidget->FadeInEndTime;
 			TheWorld->GetTimerManager().SetTimer(WaitFadeAnimEnd, FTimerDelegate::CreateLambda([this]() {

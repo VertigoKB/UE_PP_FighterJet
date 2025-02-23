@@ -4,6 +4,7 @@
 #include "PilotAimHelper.h"
 #include "Components/Image.h"
 #include "Animation/WidgetAnimation.h"
+#include "PlayerHUD.h"
 
 void UPilotAimHelper::NativeConstruct()
 {
@@ -15,7 +16,14 @@ void UPilotAimHelper::NativeConstruct()
 
 	InitArrays();
 
+	CachedHud = Cast<APlayerHUD>(GetOwningPlayer()->GetHUD());
+
 	GetWorld()->GetTimerManager().SetTimer(DigitUpdater, FTimerDelegate::CreateLambda([&]() {
+		if (CachedHud)
+		{
+			RawTurbineFloat = CachedHud->ThrustValue;
+			RawAltitudeFloat = CachedHud->AltitudeValue;
+		}
 		TurbineDigitData = GetDigitFromFloat(RawTurbineFloat);
 		AltitudeDigitData = GetDigitFromFloat(RawAltitudeFloat);
 		RefelectDataToImage();
@@ -84,73 +92,15 @@ void UPilotAimHelper::RefelectDataToImage()
 {
 	for (int8 i = 0; i < TurbineArrayLength; i++)
 	{
-		if (TurbineDigitData[i] != 0)
-		{
-			int32 DigitValue = TurbineDigitData[i];
-			UTexture2D* TargetNumber = PreLoadedNumbers[DigitValue];
-			TurbineUnits[i]->SetBrushFromTexture(TargetNumber, true);
-		}
-		else
-			TurbineUnits[i]->SetBrushFromTexture(PreLoadedBlank, true);
+		int32 DigitValue = TurbineDigitData[i];
+		UTexture2D* TargetNumber = PreLoadedNumbers[DigitValue];
+		TurbineUnits[i]->SetBrushFromTexture(TargetNumber, true);
 	}
 
 	for (int8 i = 0; i < AltitudeArrayLength; i++)
 	{
-		if (AltitudeDigitData[i] != 0)
-		{
-			int32 DigitValue = AltitudeDigitData[i];
-			UTexture2D* TargetNumber = PreLoadedNumbers[DigitValue];
-			AltitudeUnits[i]->SetBrushFromTexture(TargetNumber, true);
-		}
-		else
-			AltitudeUnits[i]->SetBrushFromTexture(PreLoadedBlank, true);
+		int32 DigitValue = AltitudeDigitData[i];
+		UTexture2D* TargetNumber = PreLoadedNumbers[DigitValue];
+		AltitudeUnits[i]->SetBrushFromTexture(TargetNumber, true);
 	}
 }
-
-/*
-void UPilotAimHelper::Temp(ETargetWidget Widget, EDigit Digit, int8 Num)
-{
-	TArray<int32> TargetWidget;
-
-	switch (Widget)
-	{
-	case ETargetWidget::Altitude:
-	{
-		if (AltitudeDigitData.Num() > 0)
-			TargetWidget = AltitudeDigitData;
-		else
-			return;
-		break;
-	}
-	case ETargetWidget::Turbine:
-	{
-		if (TurbineDigitData.Num() > 0)
-			TargetWidget = TurbineDigitData;
-		else
-			return;
-		break;
-	}
-	}
-
-	//int32 NumIndex = TargetWidget.Num();
-	int32 WidgetValue = static_cast<int32>(Widget);
-	int32 DigitValue = static_cast<int32>(Digit);
-
-	
-	//Turbine, Digit 1~3까지, Array 0~2(Num() == 3)
-	//	일의 자리! -> array[2]
-	//	십의 자리! -> array[1]
-	//	백의 자리! -> array[0]
-	//Altitude, Digit 0~3까지, Array 0~3(Num() == 4)
-	//	일의 자리! -> array[3]
-	//	십의 자리! -> array[2]
-	//	백의 자리! -> array[1]
-	//	천의 자리! -> array[0]
-	
-	switch (TargetWidget[DigitValue - WidgetValue])
-	{
-
-	}
-
-}
-*/

@@ -14,10 +14,12 @@ void UBlackWidget::NativeConstruct()
 	
 }
 
-void UBlackWidget::PlayFadeEffect(bool bIsFadeIn)
+void UBlackWidget::PlayFadeIn()
 {
-	if (bIsFadeIn)
-		PlayAnimation(FadeIn, 0.f, 1, EUMGSequencePlayMode::Forward, NormalizedDuration, false);
-	else
-		PlayAnimation(FadeIn, 0.f, 1, EUMGSequencePlayMode::Reverse, NormalizedDuration, false);
+	PlayAnimation(FadeIn, 0.f, 1, EUMGSequencePlayMode::Forward, NormalizedDuration, false);
+}
+
+void UBlackWidget::PlayFadeOut()
+{
+	PlayAnimation(FadeIn, 0.f, 1, EUMGSequencePlayMode::Reverse, NormalizedDuration, false);
 }

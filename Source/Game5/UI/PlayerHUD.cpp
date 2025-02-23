@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BlackWidget.h"
 #include "PilotAimHelper.h"
+#include "../Player/F15Pawn.h"
 
 void APlayerHUD::BeginPlay()
 {
@@ -23,4 +24,19 @@ void APlayerHUD::BeginPlay()
 		if (GeneratedAimHelper)
 			GeneratedAimHelper->AddToViewport();
 	}
+
+	TObjectPtr<APlayerController> GetOwnerController = Cast<APlayerController>(GetOwner());
+	if (GetOwnerController)
+	{
+		OwnerPlayer = Cast<AF15Pawn>(GetOwnerController->GetPawn());
+		if (OwnerPlayer)
+			OwnerPlayer->OnReceiveHudValue.BindUObject(this, &APlayerHUD::AsyncValue);
+	}
+	
+}
+
+void APlayerHUD::AsyncValue(float Thrust, float Altitude)
+{
+	ThrustValue = Thrust;
+	AltitudeValue = Altitude;
 }
