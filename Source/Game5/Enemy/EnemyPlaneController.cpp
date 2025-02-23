@@ -192,7 +192,7 @@ void AEnemyPlaneController::OnManeuverOnce()
 {
 	if (!bManeuverStateForImmelmann)
 	{
-		IsTooFar();
+		IsAbove();
 		return;
 	}
 	else
@@ -352,7 +352,7 @@ void AEnemyPlaneController::IsTooClose()
 		UE_LOG(LogTemp, Warning, TEXT("Too Close"))
 	}
 	else //Player Not Close
-		IsAbove();
+		IsFront();
 }
 
 void AEnemyPlaneController::IsAbove()
@@ -372,7 +372,7 @@ void AEnemyPlaneController::IsAbove()
 		}
 	}
 	else //Player position in downside
-		IsFront();
+		IsTooFar();
 }
 
 void AEnemyPlaneController::IsFront()

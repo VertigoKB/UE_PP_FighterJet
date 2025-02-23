@@ -72,24 +72,17 @@ protected:	//Component
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "SkeletalMesh")
 	class USkeletalMeshComponent* ModelMesh;
 
-	UPROPERTY()
-	TObjectPtr<class UFighterRotateComponent> InputRotateComponent;
-
 protected:	//Input, Control Surfaces Animation
 	UFUNCTION()
 	void ThrottleInput(const FInputActionValue& Value);
 	UFUNCTION()
 	void YawInput(const FInputActionValue& Value);
 	UFUNCTION()
-	void YawRelease(const FInputActionValue& Value);
-	UFUNCTION()
 	void PitchInput(const FInputActionValue& Value);
-	UFUNCTION()
-	void PitchRelease(const FInputActionValue& Value);
 	UFUNCTION()
 	void RollInput(const FInputActionValue& Value);
 	UFUNCTION()
-	void RollRelease(const FInputActionValue& Value);
+	void RollComplete(const FInputActionValue& Value);
 	
 	
 	UFUNCTION()
@@ -97,6 +90,12 @@ protected:	//Input, Control Surfaces Animation
 
 	UFUNCTION()
 	void UpdatePosition(float DeltaSeconds);
+	UFUNCTION()
+	void UpdateYaw(float DeltaSeconds, float Yaw);
+	UFUNCTION()
+	void UpdatePitch(float DeltaSeconds, float Pitch);
+	UFUNCTION()
+	void UpdateRoll(float DeltaSeconds, float Roll);
 	UFUNCTION()
 	void MissileAction();
 
@@ -111,7 +110,7 @@ protected:	//Input, Control Surfaces Animation
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
-	float MaxThrustSpeed = 15000.f;
+	float MaxThrustSpeed = 30000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
@@ -139,7 +138,19 @@ protected:
 	//DynamicVariables
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float AppliedGravity = 0.f;
-
+	//DynamicVariables - Rotation
+	UPROPERTY()
+	float TargetYaw = 0.f;
+	UPROPERTY()
+	float CurrentYaw = 0.f;
+	UPROPERTY()
+	float TargetPitch = 0.f;
+	UPROPERTY()
+	float CurrentPitch = 0.f;
+	UPROPERTY()
+	float TargetRoll = 0.f;
+	UPROPERTY()
+	float CurrentRoll = 0.f;
 	//DynamicVariables - Control Surfaces
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float RudderScale = 0.f;			//Yaw
@@ -149,6 +160,20 @@ protected:
 	float StabilizersScale = 0.f;		//Pitch, Rear
 	UPROPERTY(BlueprintReadOnly, Category = "DynamicVariables")
 	float AileronScale = 0.f;			//Roll
+
+public:
+
+	UPROPERTY(EditAnywhere)
+	float RollValue = 0.f;
+	UPROPERTY(EditAnywhere)
+	float CurrentRollSpeed = 1.f;
+	UPROPERTY(EditAnywhere)
+	float MaxRollSpeed = 80.f;
+	UPROPERTY(EditAnywhere)
+	float RollAcceleration = 2.5f;
+	UPROPERTY(EditAnywhere)
+	float RollDeceleration = 3.f;
+
 
 
 private: //Debug

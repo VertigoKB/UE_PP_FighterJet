@@ -68,7 +68,7 @@ protected:
 
 	//Constants
 	UPROPERTY()
-	float MaxThrustSpeed = 30000.f;
+	float MaxThrustSpeed = 15000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY()

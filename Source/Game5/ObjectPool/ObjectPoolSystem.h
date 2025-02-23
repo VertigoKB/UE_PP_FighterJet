@@ -46,6 +46,7 @@ protected:
 	UPROPERTY(BlueprintReadWrite)
 	FVector SpawnScale = FVector(1.f, 1.f, 1.f);
 
+	class UWidgetComponent;
 	FActorSpawnParameters spawnParam;
 
 	UFUNCTION()

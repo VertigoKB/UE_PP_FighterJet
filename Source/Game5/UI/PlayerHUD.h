@@ -23,5 +23,10 @@ public:
 	TSubclassOf<UUserWidget> BlackWidget;
 	UPROPERTY(BlueprintReadWrite)
 	UBlackWidget* GeneratedBlackWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> AimHelper;
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<class UPilotAimHelper> GeneratedAimHelper;
 	
 };

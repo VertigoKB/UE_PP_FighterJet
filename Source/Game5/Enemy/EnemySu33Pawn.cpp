@@ -10,6 +10,7 @@
 #include "Components/BoxComponent.h"
 
 #include "../Player/F15Pawn.h"
+#include "../Player/FighterRotateComponent.h"
 #include "EnemyPositionUpdater.h"
 #include "PlayerFinder.h"
 #include "EnemyPlaneController.h"

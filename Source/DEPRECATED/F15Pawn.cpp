@@ -13,7 +13,6 @@
 #include "Components/SceneComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "FighterRotateComponent.h"
 //Camera
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -80,8 +79,6 @@ AF15Pawn::AF15Pawn()
 	FRotator SceneCameraRotation = FRotator(0.f, -120.f, 0.f);
 	CutSceneCamera->SetRelativeRotation(SceneCameraRotation.Quaternion());
 
-	InputRotateComponent = CreateDefaultSubobject<UFighterRotateComponent>(TEXT("InputRotateComponent"));
-
 	Tags.Add(FName("Player"));
 
 	IsMissileEmpty.Init(true, MaxLoadableMissile);
@@ -110,7 +107,14 @@ void AF15Pawn::Tick(float DeltaTime)
 	UpdatePosition(DeltaTime);
 	RotateAnimation(DeltaTime);
 
+	float TargetSpeed = RollValue * MaxRollSpeed;
+	if (FMath::Abs(RollValue) > 0.01f)
+		CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, TargetSpeed, DeltaTime, RollAcceleration);
+	else
+		CurrentRollSpeed = FMath::FInterpTo(CurrentRollSpeed, 0.f, DeltaTime, RollDeceleration);
 
+	FRotator RollRotation = FRotator(0.f, 0.f, (CurrentRollSpeed * DeltaTime));
+	AddActorLocalRotation(RollRotation, true);
 }
 
 // Called to bind functionality to input
@@ -127,11 +131,9 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 	{
 		AircraftInput->BindAction(InputAction->Throttle, ETriggerEvent::Triggered, this, &AF15Pawn::ThrottleInput);
 		AircraftInput->BindAction(InputAction->NoseYaw, ETriggerEvent::Triggered, this, &AF15Pawn::YawInput);
-		AircraftInput->BindAction(InputAction->NoseYaw, ETriggerEvent::Completed, this, &AF15Pawn::YawRelease);
 		AircraftInput->BindAction(InputAction->NosePitch, ETriggerEvent::Triggered, this, &AF15Pawn::PitchInput);
-		AircraftInput->BindAction(InputAction->NosePitch, ETriggerEvent::Completed, this, &AF15Pawn::PitchRelease);
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Triggered, this, &AF15Pawn::RollInput);
-		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Completed, this, &AF15Pawn::RollRelease);
+		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Completed, this, &AF15Pawn::RollComplete);
 		AircraftInput->BindAction(InputAction->LaunchProjectile, ETriggerEvent::Started, this, &AF15Pawn::LaunchInput);
 	}
 }
@@ -147,31 +149,24 @@ void AF15Pawn::YawInput(const FInputActionValue& Value)
 {
 	float Input = Value.Get<float>();
 
-	InputRotateComponent->YawValue = Input;
-}
-void AF15Pawn::YawRelease(const FInputActionValue& Value)
-{
-	InputRotateComponent->YawValue = 0.f;
+	UpdateYaw(GetWorld()->GetDeltaSeconds(), Input);
 }
 void AF15Pawn::PitchInput(const FInputActionValue& Value)
 {
 	float Input = Value.Get<float>();
 
-	InputRotateComponent->PitchValue = Input;
-}
-void AF15Pawn::PitchRelease(const FInputActionValue& Value)
-{
-	InputRotateComponent->PitchValue = 0.f;
+	UpdatePitch(GetWorld()->GetDeltaSeconds(), Input);
 }
 void AF15Pawn::RollInput(const FInputActionValue& Value)
 {
 	float Input = Value.Get<float>();
 
-	InputRotateComponent->RollValue = Input;
+	UpdateRoll(GetWorld()->GetDeltaSeconds(), Input);
 }
-void AF15Pawn::RollRelease(const FInputActionValue& Value)
+
+void AF15Pawn::RollComplete(const FInputActionValue& Value)
 {
-	InputRotateComponent->RollValue = 0.f;
+	RollValue = 0.f;
 }
 
 void AF15Pawn::LaunchInput(const FInputActionValue& Value)
@@ -199,6 +194,44 @@ void AF15Pawn::UpdatePosition(float DeltaSeconds)
 	AddActorWorldOffset(NewPosition,true, nullptr, ETeleportType::TeleportPhysics);
 }
 
+void AF15Pawn::UpdateYaw(float DeltaSeconds, float Yaw)
+{
+	TargetYaw = Yaw;
+	CurrentYaw = FMath::FInterpTo(CurrentYaw, TargetYaw, DeltaSeconds, DebugValueA);
+
+	RudderScale = (FMath::FInterpTo(0.f, CurrentYaw , DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
+	
+	FRotator NewRotation = FRotator(0.f, (CurrentYaw * DeltaSeconds * 10.f), 0.f);
+	AddActorLocalRotation(NewRotation, true);
+}
+
+void AF15Pawn::UpdatePitch(float DeltaSeconds, float Pitch)
+{
+	TargetPitch = Pitch;
+	CurrentPitch = FMath::FInterpTo(CurrentPitch, TargetPitch, DeltaSeconds, DebugValueA);
+
+	FlapsScale = (FMath::FInterpTo(0.f, CurrentPitch, DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
+	StabilizersScale = CurrentPitch;
+
+	FRotator NewRotation = FRotator((CurrentPitch * DeltaSeconds * 10.f), 0.f, 0.f);
+	AddActorLocalRotation(NewRotation, true);
+}
+
+//void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
+//{
+//	TargetRoll = Roll;
+//	CurrentRoll = FMath::FInterpTo(CurrentRoll, TargetRoll, DeltaSeconds, DebugValueA);
+//
+//	AileronScale = (FMath::FInterpTo(0.f, CurrentRoll, DeltaSeconds, 15.f)) * CtrlSurfacesRatio;
+//
+//	FRotator NewRotation = FRotator(0.f, 0.f, (CurrentRoll * DeltaSeconds * 10.f));
+//	AddActorLocalRotation(NewRotation, true);
+//}
+
+void AF15Pawn::UpdateRoll(float DeltaSeconds, float Roll)
+{
+	RollValue = Roll;
+}
 
 void AF15Pawn::MissileAction()
 {
