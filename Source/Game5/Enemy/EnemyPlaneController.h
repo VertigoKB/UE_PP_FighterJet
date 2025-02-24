@@ -18,7 +18,8 @@ class UAISenseConfig_Sight;
 UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
-	Idle = 0	UMETA(DisplayName = "Idle"),
+	None = 0	UMETA(DisplayName = "None"),
+	Idle		UMETA(DisplayName = "Idle"),
 	Maneuver	UMETA(DisplayName = "Maneuver"),
 	Attack		UMETA(DisplayName = "Attack"),
 	Stabilize	UMETA(DisplayName = "Stabilize"),

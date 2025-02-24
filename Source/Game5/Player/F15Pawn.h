@@ -10,6 +10,7 @@
 #include "F15Pawn.generated.h"
 
 DECLARE_DELEGATE_FourParams(FHUDDelegate, float, float, float, float)
+DECLARE_DELEGATE(FViewChanger)
 
 UENUM()
 enum class ECameraType : uint8
@@ -38,6 +39,8 @@ public:
 	class UCameraComponent* CockpitCamera;
 
 	FHUDDelegate OnReceiveHudValue;
+	FViewChanger OnViewChange;
+
 	FTimerHandle HudValueExecuter;
 
 protected:
@@ -93,9 +96,10 @@ protected:	//Input, Control Surfaces Animation
 	UFUNCTION()
 	void RollRelease(const FInputActionValue& Value);
 	
-	
 	UFUNCTION()
 	void LaunchInput(const FInputActionValue& Value);
+	UFUNCTION()
+	void ChangeViewInput(const FInputActionValue& Value);
 
 	UFUNCTION()
 	void UpdatePosition(float DeltaSeconds);
@@ -105,11 +109,15 @@ protected:	//Input, Control Surfaces Animation
 	UFUNCTION()
 	void RotateAnimation(float DeltaSeconds);
 
+	UFUNCTION()
+	void RequestActiveCamera();
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputMappingContext* AirCraftInputMapping;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputDataAsset* InputAction;
+
+protected:
 
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
@@ -158,9 +166,5 @@ private: //Debug
 	float DebugValueA = 1.f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"), Category = "Debug")
 	float DebugValueB = 0.f;
-
-public:
-	UFUNCTION()
-	void RequestActiveCamera(bool bIsActive);
 
 };

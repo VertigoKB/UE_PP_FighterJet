@@ -21,6 +21,8 @@ protected:
 protected:
 	UFUNCTION()
 	void AsyncValue(float Thrust, float Altitude, float Pitch, float Roll);
+	UFUNCTION()
+	void ChangeVisiblity();
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")

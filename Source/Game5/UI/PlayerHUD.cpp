@@ -23,14 +23,20 @@ void APlayerHUD::BeginPlay()
 	{
 		GeneratedAimHelper = CreateWidget<UPilotAimHelper>(GetWorld(), AimHelper);
 		if (GeneratedAimHelper)
+		{
 			GeneratedAimHelper->AddToViewport();
+			GeneratedAimHelper->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 
 	if (Horizon)
 	{
 		GeneratedHorizon = CreateWidget<UArtificalHorizon>(GetWorld(), Horizon);
 		if (GeneratedHorizon)
+		{
 			GeneratedHorizon->AddToViewport();
+			GeneratedHorizon->SetVisibility(ESlateVisibility::Collapsed);
+		}
 	}
 
 	TObjectPtr<APlayerController> GetOwnerController = Cast<APlayerController>(GetOwner());
@@ -38,7 +44,10 @@ void APlayerHUD::BeginPlay()
 	{
 		OwnerPlayer = Cast<AF15Pawn>(GetOwnerController->GetPawn());
 		if (OwnerPlayer)
+		{
 			OwnerPlayer->OnReceiveHudValue.BindUObject(this, &APlayerHUD::AsyncValue);
+			OwnerPlayer->OnViewChange.BindUObject(this, &APlayerHUD::ChangeVisiblity);
+		}
 	}
 	
 }
@@ -49,4 +58,18 @@ void APlayerHUD::AsyncValue(float Thrust, float Altitude, float Pitch, float Rol
 	AltitudeValue = Altitude;
 	PitchValue = Pitch;
 	RollValue = Roll;
+}
+
+void APlayerHUD::ChangeVisiblity()
+{
+	if (GeneratedAimHelper->GetVisibility() == ESlateVisibility::Collapsed)
+	{
+		GeneratedAimHelper->SetVisibility(ESlateVisibility::Visible);
+		GeneratedHorizon->SetVisibility(ESlateVisibility::Visible);
+	}
+	else
+	{
+		GeneratedAimHelper->SetVisibility(ESlateVisibility::Collapsed);
+		GeneratedHorizon->SetVisibility(ESlateVisibility::Collapsed);
+	}
 }

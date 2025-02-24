@@ -140,6 +140,7 @@ void AF15Pawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Triggered, this, &AF15Pawn::RollInput);
 		AircraftInput->BindAction(InputAction->NoseRoll, ETriggerEvent::Completed, this, &AF15Pawn::RollRelease);
 		AircraftInput->BindAction(InputAction->LaunchProjectile, ETriggerEvent::Started, this, &AF15Pawn::LaunchInput);
+		AircraftInput->BindAction(InputAction->ChangeView, ETriggerEvent::Started, this, &AF15Pawn::ChangeViewInput);
 	}
 }
 void AF15Pawn::ThrottleInput(const FInputActionValue& Value)
@@ -186,6 +187,12 @@ void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 	bool bInput = Value.Get<bool>();
 
 	MissileAction();
+}
+
+void AF15Pawn::ChangeViewInput(const FInputActionValue& Value)
+{
+	RequestActiveCamera();
+	OnViewChange.ExecuteIfBound();
 }
 
 //Update PawnTransform
@@ -242,12 +249,21 @@ void AF15Pawn::RotateAnimation(float DeltaSeconds)
 }
 
 
-void AF15Pawn::RequestActiveCamera(bool bIsActive)
+void AF15Pawn::RequestActiveCamera()
 {
-	if (bIsActive)
-		Camera->Activate();
-	else
+	TObjectPtr<APlayerController> CastedController = Cast<APlayerController>(GetController());
+	if (Camera->IsActive())
+	{
 		Camera->Deactivate();
+		CockpitCamera->Activate();
+		CastedController->SetViewTarget(this);
+	}
+	else
+	{
+		Camera->Activate();
+		CockpitCamera->Deactivate();
+		CastedController->SetViewTarget(this);
+	}
 }
 
 FTransform AF15Pawn::GetMissileSocketLoaction(const uint8 SocketNum)

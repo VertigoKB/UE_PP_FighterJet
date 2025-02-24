@@ -5,13 +5,12 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 
-#include "InputAction.h"
-
 #include "InputDataAsset.generated.h"
 
 /**
  * 
  */
+class UInputAction;
 UCLASS()
 class GAME5_API UInputDataAsset : public UDataAsset
 {
@@ -19,17 +18,20 @@ class GAME5_API UInputDataAsset : public UDataAsset
 
 public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* Throttle;
+	TObjectPtr<UInputAction> Throttle;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* NoseYaw;
+	TObjectPtr<UInputAction> NoseYaw;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* NosePitch;
+	TObjectPtr<UInputAction> NosePitch;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* NoseRoll;
+	TObjectPtr <UInputAction> NoseRoll;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
-	UInputAction* LaunchProjectile;
+	TObjectPtr<UInputAction> LaunchProjectile;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<UInputAction> ChangeView;
 };
