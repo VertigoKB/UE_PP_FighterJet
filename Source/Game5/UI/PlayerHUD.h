@@ -20,7 +20,7 @@ protected:
 
 protected:
 	UFUNCTION()
-	void AsyncValue(float Thrust, float Altitude);
+	void AsyncValue(float Thrust, float Altitude, float Pitch, float Roll);
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
@@ -33,10 +33,19 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	TObjectPtr<class UPilotAimHelper> GeneratedAimHelper;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> Horizon;
+	UPROPERTY(BlueprintReadWrite)
+	TObjectPtr<class UArtificalHorizon> GeneratedHorizon;
+
 	UPROPERTY()
 	float ThrustValue = 0.f;
 	UPROPERTY()
 	float AltitudeValue = 0.f;
+	UPROPERTY()
+	float PitchValue = 0.f;
+	UPROPERTY()
+	float RollValue = 0.f;
 protected:
 	UPROPERTY()
 	TObjectPtr<class AF15Pawn> OwnerPlayer;

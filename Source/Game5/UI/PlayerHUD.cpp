@@ -5,6 +5,7 @@
 #include "Blueprint/UserWidget.h"
 #include "BlackWidget.h"
 #include "PilotAimHelper.h"
+#include "ArtificalHorizon.h"
 #include "../Player/F15Pawn.h"
 
 void APlayerHUD::BeginPlay()
@@ -25,6 +26,13 @@ void APlayerHUD::BeginPlay()
 			GeneratedAimHelper->AddToViewport();
 	}
 
+	if (Horizon)
+	{
+		GeneratedHorizon = CreateWidget<UArtificalHorizon>(GetWorld(), Horizon);
+		if (GeneratedHorizon)
+			GeneratedHorizon->AddToViewport();
+	}
+
 	TObjectPtr<APlayerController> GetOwnerController = Cast<APlayerController>(GetOwner());
 	if (GetOwnerController)
 	{
@@ -35,8 +43,10 @@ void APlayerHUD::BeginPlay()
 	
 }
 
-void APlayerHUD::AsyncValue(float Thrust, float Altitude)
+void APlayerHUD::AsyncValue(float Thrust, float Altitude, float Pitch, float Roll)
 {
 	ThrustValue = Thrust;
 	AltitudeValue = Altitude;
+	PitchValue = Pitch;
+	RollValue = Roll;
 }

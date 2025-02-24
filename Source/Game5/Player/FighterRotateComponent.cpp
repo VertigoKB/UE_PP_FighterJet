@@ -86,7 +86,7 @@ void UFighterRotateComponent::Yawing(float DeltaTime)
 	else
 		CurrentYawSpeed = FMath::FInterpTo(CurrentYawSpeed, 0.f, DeltaTime, YawDeceleration);
 
-	FRotator YawRotation = FRotator(0.f, 0.f, (CurrentYawSpeed * DeltaTime));
+	FRotator YawRotation = FRotator(0.f, (CurrentYawSpeed * DeltaTime), 0.f);
 	MyPawn->AddActorLocalRotation(YawRotation, true);
 }
 

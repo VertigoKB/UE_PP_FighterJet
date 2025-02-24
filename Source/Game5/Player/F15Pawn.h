@@ -9,7 +9,7 @@
 
 #include "F15Pawn.generated.h"
 
-DECLARE_DELEGATE_TwoParams(FHUDDelegate, float, float)
+DECLARE_DELEGATE_FourParams(FHUDDelegate, float, float, float, float)
 
 UENUM()
 enum class ECameraType : uint8

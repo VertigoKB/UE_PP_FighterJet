@@ -101,9 +101,11 @@ void AF15Pawn::BeginPlay()
 		if (MappedZ > 9999.f)
 			MappedZ = 9999.f;
 			
+		float PlayerPitch = GetActorRotation().Pitch;
+		float PlayerRoll = GetActorRotation().Roll;
 		float MappedThrust = (ThrustSpeed / MaxThrustSpeed) * 650.f;
-		OnReceiveHudValue.ExecuteIfBound(MappedThrust, MappedZ);
-		}), 0.1f, true);
+		OnReceiveHudValue.ExecuteIfBound(MappedThrust, MappedZ, PlayerPitch, PlayerRoll);
+		}), 0.02f, true);
 	
 }
 
