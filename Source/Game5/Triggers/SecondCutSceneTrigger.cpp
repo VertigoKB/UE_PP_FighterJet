@@ -85,7 +85,7 @@ void ASecondCutSceneTrigger::MoveToNextLevel()
 	PlayerHud->GeneratedBlackWidget->PlayFadeOut();
 	FTimerHandle FadeOutTimer;
 	GetWorldTimerManager().SetTimer(FadeOutTimer, FTimerDelegate::CreateLambda([&]() {
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), NextLevel);
+		UGameplayStatics::OpenLevel(GetWorld(), FName(TEXT("BattleField")));
 		}), FadeOutEndTime, false);
 }
 
@@ -136,11 +136,11 @@ bool ASecondCutSceneTrigger::CachAndInitialize()
 	if (!PlayerHud)
 		return false;
 
-	if (!NextLevel)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("NextLevel is null &ASecondCutSceneTrigger::CachAndInitialize"));
-		return false;
-	}
+	//if (!NextLevel)
+	//{
+	//	UE_LOG(LogTemp, Warning, TEXT("NextLevel is null &ASecondCutSceneTrigger::CachAndInitialize"));
+	//	return false;
+	//}
 
 	return true;
 }

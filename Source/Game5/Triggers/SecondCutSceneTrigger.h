@@ -44,8 +44,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class APlayerHUD> PlayerHud;
 
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<class UWorld> NextLevel;
+	//UPROPERTY(EditDefaultsOnly)
+	//TObjectPtr<class UWorld> NextLevel;
 protected:
 	UPROPERTY()
 	TObjectPtr<class UBoxComponent> PassingbyCollision;
