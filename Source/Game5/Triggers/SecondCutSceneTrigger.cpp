@@ -17,6 +17,9 @@ ASecondCutSceneTrigger::ASecondCutSceneTrigger()
 
 	PassingbyCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("PssingbyCollision"));
 	PassingbyCollision->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+
+
+	bIsSpatiallyLoaded = false;
 	
 }
 
