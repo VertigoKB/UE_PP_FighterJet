@@ -80,6 +80,8 @@ AF15Pawn::AF15Pawn()
 
 	IsMissileEmpty.Init(true, MaxLoadableMissile);
 	LoadedMissiles.Init(nullptr, MaxLoadableMissile);
+
+	PlayerState = EPlayerState::None;		//Trigger/SecondCutSceneTrigger will set state as PlayerState::CutScene
 }
 
 // Called when the game starts or when spawned
@@ -92,6 +94,7 @@ void AF15Pawn::BeginPlay()
 
 	if (CockpitCamera)
 		CockpitCamera->Deactivate();
+
 
 	GetWorldTimerManager().SetTimer(HudValueExecuter, FTimerDelegate::CreateLambda([&]() {
 		float RawZ = GetActorLocation().Z;
@@ -198,6 +201,9 @@ void AF15Pawn::ChangeViewInput(const FInputActionValue& Value)
 //Update PawnTransform
 void AF15Pawn::UpdatePosition(float DeltaSeconds)
 {
+	if (!(PlayerState == EPlayerState::CutScene))
+		ThrustParam = ThrustSpeed;
+
 	if (ThrustSpeed > 0.f)
 		ThrustSpeed -= 2.3f;
 
@@ -207,8 +213,11 @@ void AF15Pawn::UpdatePosition(float DeltaSeconds)
 		CurrentSpeed = ThrustSpeed;
 
 	FVector NewPosition = (CurrentSpeed * DeltaSeconds) * GetActorForwardVector();
-
-	AppliedGravity = UKismetMathLibrary::MapRangeClamped(CurrentSpeed, 0.f, MinThrustToNotFall, Gravity, 0.f);
+	
+	if (PlayerState == EPlayerState::None)
+		AppliedGravity = UKismetMathLibrary::MapRangeClamped(CurrentSpeed, 0.f, MinThrustToNotFall, Gravity, 0.f);
+	else
+		AppliedGravity = 0.f;
 
 	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds * 5.5f);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);

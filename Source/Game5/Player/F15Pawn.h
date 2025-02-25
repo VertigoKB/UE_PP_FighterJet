@@ -19,6 +19,12 @@ enum class ECameraType : uint8
 	Cockpit,
 	CutScene
 };
+UENUM()
+enum class EPlayerState : uint8
+{
+	None = 0,
+	CutScene
+};
 
 UCLASS()
 class GAME5_API AF15Pawn : public APawn
@@ -42,6 +48,8 @@ public:
 	FViewChanger OnViewChange;
 
 	FTimerHandle HudValueExecuter;
+
+	EPlayerState PlayerState;
 
 protected:
 	// Called when the game starts or when spawned
@@ -118,10 +126,6 @@ protected:	//Input, Control Surfaces Animation
 	class UInputDataAsset* InputAction;
 
 protected:
-
-	//Constants
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
-	float MaxThrustSpeed = 15000.f;
 	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
@@ -139,10 +143,15 @@ protected:
 	float CtrlSurfacesRecoveryFactor = 1.f;
 
 public:
+	//Constants
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Constants")
+	float MaxThrustSpeed = 15000.f;
 	//DynamicVariables	//UHoldingDataComp need to access
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadWrite, Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
+	UPROPERTY(BlueprintReadWrite, Category = "DynamicVariables")
+	float ThrustParam = 0.f;
+	UPROPERTY(BlueprintReadWrite, Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
 
 protected:

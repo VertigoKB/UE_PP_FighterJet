@@ -20,11 +20,25 @@ public:
 	virtual void OnPostLogin(AController* NewPlayer) override;
 
 private:
+	UFUNCTION()
+	void FindCarrierCamera(AController* NewPlayer);
+
 	UPROPERTY()
 	TSubclassOf<AActor> BPfighter;
 	UPROPERTY()
 	TSubclassOf<AActor> BPspawnpointCarrier;
+
+	UPROPERTY()
+	TSubclassOf<AActor> BPCameraCarrierA;
 	UPROPERTY()
 	APawn* PlayerPawn;
+
+	UPROPERTY()
+	TObjectPtr<class APlayerController> PlayerController;
+
+	UPROPERTY()
+	TObjectPtr<AActor> CameraCarrierA;
+
+protected:
 
 };

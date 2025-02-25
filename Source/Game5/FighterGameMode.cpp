@@ -6,6 +6,7 @@
 //Engine
 #include "Kismet/GameplayStatics.h"
 #include "Player/UserController.h"
+#include "CutScene/CameraActors/CameraCarrierA.h"
 
 AFighterGameMode::AFighterGameMode()
 {
@@ -21,6 +22,10 @@ AFighterGameMode::AFighterGameMode()
 	ConstructorHelpers::FClassFinder<AActor> SPAWNPOINT_CARRIER(TEXT("/Game/Blueprints/Player/BP_SpawnPoint_Carrier.BP_SpawnPoint_Carrier_C"));
 	if (SPAWNPOINT_CARRIER.Succeeded())
 		BPspawnpointCarrier = SPAWNPOINT_CARRIER.Class;
+
+	ConstructorHelpers::FClassFinder<AActor> CAMERACARRIER(TEXT("/Game/Blueprints/CutScene/CameraActors/BP_CameraCarrierA.BP_CameraCarrierA_C"));
+	if (CAMERACARRIER.Succeeded())
+		BPCameraCarrierA = CAMERACARRIER.Class;
 
 	DefaultPawnClass = nullptr;
 }
@@ -51,4 +56,29 @@ void AFighterGameMode::OnPostLogin(AController* NewPlayer)
 		PlayerPawn = Cast<APawn>(SpawningActor);
 		NewPlayer->Possess(PlayerPawn);
 	}
+
+	FindCarrierCamera(NewPlayer);
+}
+
+void AFighterGameMode::FindCarrierCamera(AController* NewPlayer)
+{
+	FTimerHandle CameraFinder;
+	GetWorldTimerManager().SetTimer(CameraFinder, FTimerDelegate::CreateLambda([&]() {
+		TArray<AActor*> CameraRefArray;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), BPCameraCarrierA, CameraRefArray);
+
+		if (CameraRefArray.Num() > 0)
+			CameraCarrierA = CameraRefArray[0];
+
+		if (CameraCarrierA != nullptr)
+		{
+			APlayerController* MyController = Cast<APlayerController>(PlayerPawn->GetController());
+			MyController->SetViewTarget(CameraCarrierA);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("CameraCarrierA is null &AFighterGameMode::OnPostLogin"));
+		}
+		}), 0.5f, false);
+
 }

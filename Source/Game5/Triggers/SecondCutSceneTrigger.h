@@ -22,6 +22,47 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+protected:
+	UFUNCTION()
+	void SceneATakeOffByTimer();
+	UFUNCTION()
+	void SceneBPitchUp();
+protected:
+	UFUNCTION()
+	void FindPlayer();
+	UFUNCTION()
+	bool CachAndInitialize();
+
+	bool bInitFlag = false;
+protected:
+	UPROPERTY()
+	TObjectPtr<class AF15Pawn> PlayerPawn;
+	UPROPERTY()
+	TObjectPtr<class UFighterRotateComponent> PlayerRotateComp;
+protected:
+	UPROPERTY()
+	TObjectPtr<class UBoxComponent> PassingbyCollision;
+
+	
+	bool bSceneTrigger = true;
+
+	bool bPitchUpTrigger = false;
+
+	UPROPERTY()
+	FVector WaittingLocation;
+
+protected:
+	UPROPERTY(EditDefaultsOnly)
+	float SceneATakeOffDelay = 4.f;
+	UPROPERTY(EditDefaultsOnly)
+	float TakeOffSpeedRatio = 0.6f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float SceneBPitchUpDelay = 1.2f;
+
+protected:
+	FTimerHandle SceneBTimer;
+	
 
 	
 };
