@@ -2,9 +2,12 @@
 
 
 #include "SecondCutSceneTrigger.h"
+#include "Kismet/GameplayStatics.h"
 #include "Components/BoxComponent.h"
 #include "../Player/F15Pawn.h"
 #include "../Player/FighterRotateComponent.h"
+#include "../UI/PlayerHUD.h"
+#include "../UI/BlackWidget.h"
 
 // Sets default values
 ASecondCutSceneTrigger::ASecondCutSceneTrigger()
@@ -23,7 +26,14 @@ void ASecondCutSceneTrigger::BeginPlay()
 	Super::BeginPlay();
 	SetActorTickEnabled(false);
 	FindPlayer();
-	SceneATakeOffByTimer();
+}
+
+void ASecondCutSceneTrigger::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearTimer(SceneBTimer);
+	GetWorldTimerManager().ClearTimer(SceneBOpenNextLevel);
+	SceneBTimer.Invalidate();
+	SceneBOpenNextLevel.Invalidate();
 }
 
 // Called every frame
@@ -58,8 +68,22 @@ void ASecondCutSceneTrigger::SceneBPitchUp()
 	bPitchUpTrigger = true;
 	FTimerHandle PitchEnd;
 	GetWorldTimerManager().SetTimer(PitchEnd, FTimerDelegate::CreateLambda([&]() {
+
 		bPitchUpTrigger = false;
+		
+		GetWorldTimerManager().SetTimer(SceneBOpenNextLevel, this, &ASecondCutSceneTrigger::MoveToNextLevel, 4.f, false);
+
 		}), 0.3f, false);
+}
+
+void ASecondCutSceneTrigger::MoveToNextLevel()
+{
+	float FadeOutEndTime = PlayerHud->GeneratedBlackWidget->FadeInEndTime;
+	PlayerHud->GeneratedBlackWidget->PlayFadeOut();
+	FTimerHandle FadeOutTimer;
+	GetWorldTimerManager().SetTimer(FadeOutTimer, FTimerDelegate::CreateLambda([&]() {
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), NextLevel);
+		}), FadeOutEndTime, false);
 }
 
 void ASecondCutSceneTrigger::FindPlayer()
@@ -79,6 +103,9 @@ void ASecondCutSceneTrigger::FindPlayer()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("CachAndInitialize Failed &ASecondCutSceneTrigger::BeginPlay"));
 		}
+
+		SceneATakeOffByTimer();
+		PlayerHud->GeneratedBlackWidget->PlayFadeIn();
 		}), 0.05, false);
 
 }
@@ -96,6 +123,21 @@ bool ASecondCutSceneTrigger::CachAndInitialize()
 	if (!PlayerRotateComp)
 		return false;
 
-	
+	APlayerController* TheController = Cast<APlayerController>(PlayerPawn->GetController());
+	if (TheController)
+	{
+		AHUD* WorldHud = TheController->GetHUD();
+		if (WorldHud)
+			PlayerHud = Cast<APlayerHUD>(WorldHud);
+	}
+	if (!PlayerHud)
+		return false;
+
+	if (!NextLevel)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("NextLevel is null &ASecondCutSceneTrigger::CachAndInitialize"));
+		return false;
+	}
+
 	return true;
 }

@@ -60,7 +60,7 @@ AF15Pawn::AF15Pawn()
 	
 	SpringArm = CreateDefaultSubobject<USpringArmComponent>(TEXT("SpringArm"));
 	SpringArm->SetupAttachment(RootComponent);
-	SpringArm->TargetArmLength = 600.f;
+	SpringArm->TargetArmLength = 1000.f;
 	SpringArm->SetRelativeLocation(FVector(-1600.f, 0.f, 570.f));
 	SpringArm->TargetOffset = FVector(0.f, 0.f, 100.f);
 	SpringArm->bInheritYaw = true;
@@ -81,7 +81,7 @@ AF15Pawn::AF15Pawn()
 	IsMissileEmpty.Init(true, MaxLoadableMissile);
 	LoadedMissiles.Init(nullptr, MaxLoadableMissile);
 
-	PlayerState = EPlayerState::None;		//Trigger/SecondCutSceneTrigger will set state as PlayerState::CutScene
+	PlayerState = EPlayerState::CutScene;		//Trigger/SecondCutSceneTrigger will set state as PlayerState::CutScene
 }
 
 // Called when the game starts or when spawned
@@ -110,6 +110,12 @@ void AF15Pawn::BeginPlay()
 		OnReceiveHudValue.ExecuteIfBound(MappedThrust, MappedZ, PlayerPitch, PlayerRoll);
 		}), 0.02f, true);
 	
+}
+
+void AF15Pawn::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	GetWorldTimerManager().ClearTimer(HudValueExecuter);
+	HudValueExecuter.Invalidate();
 }
 
 // Called every frame

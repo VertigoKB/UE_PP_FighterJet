@@ -17,7 +17,7 @@ class GAME5_API APlayerHUD : public AHUD
 
 protected:
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 protected:
 	UFUNCTION()
 	void AsyncValue(float Thrust, float Altitude, float Pitch, float Roll);

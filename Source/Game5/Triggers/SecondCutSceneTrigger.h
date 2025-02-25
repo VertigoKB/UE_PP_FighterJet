@@ -18,7 +18,7 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -27,6 +27,8 @@ protected:
 	void SceneATakeOffByTimer();
 	UFUNCTION()
 	void SceneBPitchUp();
+	UFUNCTION()
+	void MoveToNextLevel();
 protected:
 	UFUNCTION()
 	void FindPlayer();
@@ -39,9 +41,16 @@ protected:
 	TObjectPtr<class AF15Pawn> PlayerPawn;
 	UPROPERTY()
 	TObjectPtr<class UFighterRotateComponent> PlayerRotateComp;
+	UPROPERTY()
+	TObjectPtr<class APlayerHUD> PlayerHud;
+
+	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<class UWorld> NextLevel;
 protected:
 	UPROPERTY()
 	TObjectPtr<class UBoxComponent> PassingbyCollision;
+
+	
 
 	
 	bool bSceneTrigger = true;
@@ -62,6 +71,7 @@ protected:
 
 protected:
 	FTimerHandle SceneBTimer;
+	FTimerHandle SceneBOpenNextLevel;
 	
 
 	

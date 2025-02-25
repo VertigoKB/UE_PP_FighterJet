@@ -52,6 +52,12 @@ void APlayerHUD::BeginPlay()
 	
 }
 
+void APlayerHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	OwnerPlayer->OnReceiveHudValue.Unbind();
+	OwnerPlayer->OnViewChange.Unbind();
+}
+
 void APlayerHUD::AsyncValue(float Thrust, float Altitude, float Pitch, float Roll)
 {
 	ThrustValue = Thrust;
