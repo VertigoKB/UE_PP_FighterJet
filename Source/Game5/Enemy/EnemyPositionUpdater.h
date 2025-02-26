@@ -11,6 +11,13 @@ DECLARE_DELEGATE(FPullUpDone)
 DECLARE_DELEGATE(FImmelmannTurnDone)
 DECLARE_DELEGATE(FStabilizeDone)
 
+UENUM()
+enum class ECutSceneState
+{
+	EndCutScene = 0,
+	CutScene
+};
+
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API UEnemyPositionUpdater : public UActorComponent
 {
@@ -27,6 +34,8 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	ECutSceneState State;
 
 public:
 	FRollingDone RollingDone;
@@ -68,8 +77,6 @@ protected:
 
 	//Constants
 	UPROPERTY()
-	float MaxThrustSpeed = 15000.f;
-	UPROPERTY()
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY()
 	float ThrustMultiplier = 2500.f;
@@ -79,9 +86,14 @@ protected:
 	float Drag = 0.25f;
 
 public:
+	//Constants
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	float MaxThrustSpeed = 15000.f;
 	//DynamicVariables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;
+	UPROPERTY(BlueprintReadWrite, Category = "DynamicVariables")
+	float ThrustParam = 0.f;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
 

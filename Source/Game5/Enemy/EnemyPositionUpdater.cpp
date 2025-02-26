@@ -28,6 +28,7 @@ void UEnemyPositionUpdater::BeginPlay()
 		return;
 	}
 
+	State = ECutSceneState::CutScene;
 }
 
 // Called every frame
@@ -79,7 +80,10 @@ void UEnemyPositionUpdater::UpdatePosition(float DeltaSeconds)
 
 	FVector NewPosition = (CurrentSpeed * DeltaSeconds) * CompOwner->GetActorForwardVector();
 
-	AppliedGravity = UKismetMathLibrary::MapRangeClamped(CurrentSpeed, 0.f, MinThrustToNotFall, Gravity, 0.f);
+	if (State == ECutSceneState::EndCutScene)
+		AppliedGravity = UKismetMathLibrary::MapRangeClamped(CurrentSpeed, 0.f, MinThrustToNotFall, Gravity, 0.f);
+	else
+		AppliedGravity = 0.f;
 
 	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds * 1.5f);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);

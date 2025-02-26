@@ -28,7 +28,7 @@ AEnemyPlaneController::AEnemyPlaneController()
 	Intelligence->ConfigureSense(*SightConfig);
 	Intelligence->SetDominantSense(SightConfig->GetSenseImplementation());
 
-	State = EEnemyState::Stabilize;
+	State = EEnemyState::None;
 }
 
 void AEnemyPlaneController::BeginPlay()
@@ -63,6 +63,11 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 
 	switch (State)
 	{
+	case EEnemyState::None:
+	{
+		PositionUpdater->State = ECutSceneState::CutScene;
+		break;
+	}
 	case EEnemyState::Idle:
 	{
 		OnIdleTick();
@@ -132,6 +137,7 @@ bool AEnemyPlaneController::Initialize()
 	if (!PositionUpdater)
 		return false;
 
+
 	PositionUpdater->RollingDone.BindLambda([this]() {
 		bRollingDone = true;
 		});
@@ -150,6 +156,10 @@ bool AEnemyPlaneController::Initialize()
 
 void AEnemyPlaneController::OnIdleTick()
 {
+
+	if (PositionUpdater->State != ECutSceneState::EndCutScene)
+		PositionUpdater->State = ECutSceneState::EndCutScene;
+
 	OnceManeuverNode.Reset();
 	OnceAttackNode.Reset();
 	OnceStabilizeNode.Reset();

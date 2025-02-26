@@ -128,8 +128,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	float LockOnRange = 50000.f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	EEnemyState State = EEnemyState::Stabilize;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FPlayerRelativePosition PosState;
@@ -146,6 +144,10 @@ protected:
 	FTimerHandle RelativeLocGetter;
 	FTimerHandle ManeuverTimer;
 	FTimerHandle PosStateUpdater;
+public:
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	EEnemyState State = EEnemyState::Stabilize;
 
 protected:
 	UPROPERTY()

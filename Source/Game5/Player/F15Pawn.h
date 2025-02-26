@@ -62,6 +62,11 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void RequestRetractWheel();
+
 protected:	//Missile
 	UFUNCTION(BlueprintCallable)
 	FTransform GetMissileSocketLoaction(const uint8 SocketNum);
@@ -120,6 +125,7 @@ protected:	//Input, Control Surfaces Animation
 	UFUNCTION()
 	void RequestActiveCamera();
 
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputMappingContext* AirCraftInputMapping;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
@@ -153,6 +159,8 @@ public:
 	float ThrustParam = 0.f;
 	UPROPERTY(BlueprintReadWrite, Category = "DynamicVariables")
 	float CurrentSpeed = 0.f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float RetractWheel = 0.f;
 
 protected:
 	//DynamicVariables

@@ -24,55 +24,36 @@ public:
 	virtual void Tick(float DeltaTime) override;
 protected:
 	UFUNCTION()
-	void SceneATakeOffByTimer();
-	UFUNCTION()
-	void SceneBPitchUp();
-	UFUNCTION()
-	void MoveToNextLevel();
-protected:
-	UFUNCTION()
-	void FindPlayer();
+	void SettingActors();
 	UFUNCTION()
 	bool CachAndInitialize();
 
 	bool bInitFlag = false;
+	
+protected:
+	UFUNCTION()
+	void SceneAPlayerSequence();
+	UFUNCTION()
+	void GameStart();
 protected:
 	UPROPERTY()
 	TObjectPtr<class AF15Pawn> PlayerPawn;
 	UPROPERTY()
-	TObjectPtr<class UFighterRotateComponent> PlayerRotateComp;
-	UPROPERTY()
 	TObjectPtr<class APlayerHUD> PlayerHud;
-
-	//UPROPERTY(EditDefaultsOnly)
-	//TObjectPtr<class UWorld> NextLevel;
-protected:
 	UPROPERTY()
-	TObjectPtr<class UBoxComponent> PassingbyCollision;
-
-	
-
-	
-	bool bSceneTrigger = true;
-
-	bool bPitchUpTrigger = false;
+	TObjectPtr<class APlayerController> FirstController;
 
 	UPROPERTY()
-	FVector WaittingLocation;
+	TObjectPtr<class AEnemySu33Pawn> EnemyPawn;
+	UPROPERTY()
+	TObjectPtr<class AEnemyPlaneController> EnemyController;
+	UPROPERTY()
+	TObjectPtr<class UEnemyPositionUpdater> EnemyPositionUpdater;
 
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	float SceneATakeOffDelay = 4.f;
-	UPROPERTY(EditDefaultsOnly)
-	float TakeOffSpeedRatio = 0.6f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float SceneBPitchUpDelay = 1.2f;
-
-protected:
-	FTimerHandle SceneBTimer;
-	FTimerHandle SceneBOpenNextLevel;
-	
+	UPROPERTY()
+	TObjectPtr<class AActor> SequenceCamera;
+	UPROPERTY()
+	TObjectPtr<class ABattleFieldLevelSequenceActor> SequenceExecuter;
 
 	
 };
