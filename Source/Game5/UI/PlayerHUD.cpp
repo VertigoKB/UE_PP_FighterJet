@@ -97,6 +97,7 @@ bool APlayerHUD::CachEnemy()
 			EnemyFinder.Add(Actor);
 			Actor->GetFName();
 			//UE_LOG(LogTemp,)
+			//근데 굳이 여기다 해야되나?? 컨트롤러에 하면 안되나?
 		}
 	}
 	else
