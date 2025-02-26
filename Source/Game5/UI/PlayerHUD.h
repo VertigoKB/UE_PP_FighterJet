@@ -24,6 +24,9 @@ protected:
 	UFUNCTION()
 	void ChangeVisiblity();
 
+	UFUNCTION()
+	bool CachEnemy();
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> BlackWidget;
@@ -51,4 +54,7 @@ public:
 protected:
 	UPROPERTY()
 	TObjectPtr<class AF15Pawn> OwnerPlayer;
+
+	UPROPERTY()
+	TArray<TObjectPtr<AActor>> EnemyFinder;
 };

@@ -2,11 +2,13 @@
 
 
 #include "PlayerHUD.h"
+#include "Kismet/GameplayStatics.h"
 #include "Blueprint/UserWidget.h"
 #include "BlackWidget.h"
 #include "PilotAimHelper.h"
 #include "ArtificalHorizon.h"
 #include "../Player/F15Pawn.h"
+#include "../Enemy/EnemySu33Pawn.h"
 
 void APlayerHUD::BeginPlay()
 {
@@ -49,6 +51,8 @@ void APlayerHUD::BeginPlay()
 			OwnerPlayer->OnViewChange.BindUObject(this, &APlayerHUD::ChangeVisiblity);
 		}
 	}
+
+	CachEnemy();
 	
 }
 
@@ -78,4 +82,26 @@ void APlayerHUD::ChangeVisiblity()
 		GeneratedAimHelper->SetVisibility(ESlateVisibility::Collapsed);
 		GeneratedHorizon->SetVisibility(ESlateVisibility::Collapsed);
 	}
+}
+
+bool APlayerHUD::CachEnemy()
+{
+	TArray<AActor*> TempEnemyFinder;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), AEnemySu33Pawn::StaticClass(), TempEnemyFinder);
+	
+	if (TempEnemyFinder.Num() > 0)
+	{
+		EnemyFinder.Empty();
+		for (AActor* Actor : TempEnemyFinder)
+		{
+			EnemyFinder.Add(Actor);
+			Actor->GetFName();
+			//UE_LOG(LogTemp,)
+		}
+	}
+	else
+		return false;
+
+	return true;
+
 }

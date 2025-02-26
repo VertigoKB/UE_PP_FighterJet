@@ -72,10 +72,12 @@ protected:
 
 protected:
 	void ReceiveDelegateCall(bool* ReceiveTarget);
+	void CheckBoolean(bool* bCondition);
 
 
 	UFUNCTION()
 	void CompareFloat(float condA, float condB, FName CompOp);
+	
 	UFUNCTION()
 	void StopManeuveringWhenLimit();
 
@@ -99,6 +101,9 @@ protected:
 protected:
 	// Point TargetDone will prevent return in ReceiveDelegateCall().The Function is tick action.
 	bool* DelegateDone = nullptr;
+
+	bool* CheckTarget = nullptr;
+	bool OldCondition = false;
 
 	bool bManeuverStateForImmelmann = false;
 
@@ -137,7 +142,9 @@ protected:
 	TDoOnce OnceStabilizeNode;
 	TDoOnce OnceSearchNode;
 
-	TDoOnce OnceANode;
+	TDoOnce OnceReceiveDelegateNode;
+	TDoOnce OnceSearchActionNode;
+
 	TDoOnce OnceBNode;
 	TDoOnce OnceCNode;
 

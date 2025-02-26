@@ -165,7 +165,9 @@ void AEnemyPlaneController::OnIdleTick()
 	OnceStabilizeNode.Reset();
 	OnceSearchNode.Reset();
 
-	OnceANode.Reset();
+	OnceReceiveDelegateNode.Reset();
+	OnceSearchActionNode.Reset();
+
 	OnceBNode.Reset();
 	OnceCNode.Reset();						//Reset all DoOnce
 
@@ -221,14 +223,15 @@ void AEnemyPlaneController::OnManeuverTick()
 
 void AEnemyPlaneController::OnAttackOnce()
 {
-	FTimerHandle Temp;
-	GetWorldTimerManager().SetTimer(Temp, FTimerDelegate::CreateLambda([&]() {
-		State = EEnemyState::Stabilize;
-		}), 5.f, false);
+	//FTimerHandle Temp;
+	//GetWorldTimerManager().SetTimer(Temp, FTimerDelegate::CreateLambda([&]() {
+	//	State = EEnemyState::Stabilize;
+	//	}), 5.f, false);
 }
 void AEnemyPlaneController::OnAttackTick()
 {
-
+	if (!bLockable)
+		State = EEnemyState::Stabilize;
 }
 
 void AEnemyPlaneController::OnSearchOnce()
@@ -236,35 +239,44 @@ void AEnemyPlaneController::OnSearchOnce()
 }
 void AEnemyPlaneController::OnSearchTick()
 {
-	if (PosState.bIsInFront)
+	//CheckBoolean(CheckTarget);
+	//if (PosState.bIsInFront)
+	//{
+	if (PosState.bIsAbove)
 	{
-		if (PosState.bIsAbove)
-		{
-			MyPawn->bPitchUp = true;
-			MyPawn->bPitchDown = false;
-		}
-		else
-		{
-			MyPawn->bPitchUp = false;
-			MyPawn->bPitchDown = true;
-		}
-
-		if (PosState.bIsRight)
-		{
-			MyPawn->bYawRight = true;
-			MyPawn->bYawLeft = false;
-		}
-		else
-		{
-			MyPawn->bYawRight = false;
-			MyPawn->bYawLeft = true;
-		}
+		MyPawn->bPitchUp = true;
+		MyPawn->bPitchDown = false;
 	}
 	else
 	{
-		bManeuverStateForImmelmann = true;
-		State = EEnemyState::Stabilize;
+		MyPawn->bPitchUp = false;
+		MyPawn->bPitchDown = true;
 	}
+
+	if (PosState.bIsRight)
+	{
+		MyPawn->bYawRight = true;
+		MyPawn->bYawLeft = false;
+	}
+	else
+	{
+		MyPawn->bYawRight = false;
+		MyPawn->bYawLeft = true;
+	}
+	
+	//else
+	//{
+	//	OnceSearchActionNode.Execute([&]() {
+	//		RequestRolling(TEXT("Right"));
+	//		OldCondition = PosState.bIsInFront;
+	//		CheckTarget = &PosState.bIsInFront;
+	//		State = EEnemyState::Maneuver;
+	//		UE_LOG(LogTemp, Warning, TEXT("Search to rear side."))
+	//		});
+	//}
+
+	if (DistanceToTarget < LockOnRange)
+		State = EEnemyState::Stabilize;
 }
 
 void AEnemyPlaneController::OnDeath()
@@ -278,11 +290,14 @@ void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)
 
 	if (ReceiveTarget == &bRollingDone)
 	{
-		if (*ReceiveTarget)
-			OnceANode.Execute([&]() {
-			MyPawn->bPitchUp = true;
-			StopManeuveringWhenLimit();
-				});
+		if (State == EEnemyState::Maneuver)
+		{
+			if (*ReceiveTarget)
+				OnceReceiveDelegateNode.Execute([&]() {
+				MyPawn->bPitchUp = true;
+				StopManeuveringWhenLimit();
+					});
+		}
 
 		if (bLockable)
 		{
@@ -296,7 +311,7 @@ void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)
 		float CurrentAltitude = MyPawn->GetActorLocation().Z;
 		float TargetAltitude = Target->GetActorLocation().Z;
 
-		OnceANode.Execute([&]() {
+		OnceReceiveDelegateNode.Execute([&]() {
 			StopManeuveringWhenLimit();
 			});
 
@@ -332,6 +347,19 @@ void AEnemyPlaneController::CompareFloat(float condA, float condB, FName CompOp)
 		GetWorld()->GetTimerManager().ClearTimer(ManeuverTimer);
 		State = EEnemyState::Stabilize;
 	}
+}
+
+void AEnemyPlaneController::CheckBoolean(bool* bCondition)
+{
+	if (!bCondition)
+		return;
+
+	if (*bCondition != OldCondition)
+	{
+		GetWorld()->GetTimerManager().ClearTimer(ManeuverTimer);
+		State = EEnemyState::Stabilize;
+	}
+
 }
 
 void AEnemyPlaneController::StopManeuveringWhenLimit()

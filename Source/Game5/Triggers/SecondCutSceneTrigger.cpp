@@ -148,11 +148,14 @@ void ASecondCutSceneTrigger::SceneAPlayerSequence()
 
 void ASecondCutSceneTrigger::GameStart()
 {
-	PlayerPawn->PlayerState = EPlayerState::None;
-	PlayerPawn->ThrustSpeed = PlayerPawn->MaxThrustSpeed;
-	PlayerPawn->CurrentSpeed = PlayerPawn->MaxThrustSpeed;
+	if (false)
+	{
+		PlayerPawn->PlayerState = EPlayerState::None;
+		PlayerPawn->ThrustSpeed = PlayerPawn->MaxThrustSpeed;
+		PlayerPawn->CurrentSpeed = PlayerPawn->MaxThrustSpeed;
 
-	EnemyController->State = EEnemyState::Stabilize;
-	EnemyPositionUpdater->ThrustSpeed = EnemyPositionUpdater->MaxThrustSpeed;
-	EnemyPositionUpdater->CurrentSpeed = EnemyPositionUpdater->MaxThrustSpeed;
+		EnemyController->State = EEnemyState::Stabilize;
+		EnemyPositionUpdater->ThrustSpeed = EnemyPositionUpdater->MaxThrustSpeed;
+		EnemyPositionUpdater->CurrentSpeed = EnemyPositionUpdater->MaxThrustSpeed;
+	}
 }
