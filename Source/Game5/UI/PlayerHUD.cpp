@@ -48,7 +48,7 @@ void APlayerHUD::BeginPlay()
 		if (OwnerPlayer)
 		{
 			OwnerPlayer->OnReceiveHudValue.BindUObject(this, &APlayerHUD::AsyncValue);
-			OwnerPlayer->OnViewChange.BindUObject(this, &APlayerHUD::ChangeVisiblity);
+			OwnerPlayer->OnViewChange.AddUObject(this, &APlayerHUD::ChangeVisiblity);
 		}
 	}
 
@@ -59,7 +59,7 @@ void APlayerHUD::BeginPlay()
 void APlayerHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	OwnerPlayer->OnReceiveHudValue.Unbind();
-	OwnerPlayer->OnViewChange.Unbind();
+	OwnerPlayer->OnViewChange.RemoveAll(this);
 }
 
 void APlayerHUD::AsyncValue(float Thrust, float Altitude, float Pitch, float Roll)
@@ -95,9 +95,6 @@ bool APlayerHUD::CachEnemy()
 		for (AActor* Actor : TempEnemyFinder)
 		{
 			EnemyFinder.Add(Actor);
-			Actor->GetFName();
-			//UE_LOG(LogTemp,)
-			//근데 굳이 여기다 해야되나?? 컨트롤러에 하면 안되나?
 		}
 	}
 	else

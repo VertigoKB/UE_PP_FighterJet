@@ -19,6 +19,7 @@ UENUM(BlueprintType)
 enum class EEnemyState : uint8
 {
 	None = 0	UMETA(DisplayName = "None"),
+	Init		UMETA(DisplayName = "Init"),
 	Idle		UMETA(DisplayName = "Idle"),
 	Maneuver	UMETA(DisplayName = "Maneuver"),
 	Attack		UMETA(DisplayName = "Attack"),
@@ -48,6 +49,8 @@ protected:
 
 protected:
 	UFUNCTION()
+	void OnInitTick();
+	UFUNCTION()
 	void OnIdleTick();
 	UFUNCTION()
 	void OnStabilizeTick();
@@ -61,6 +64,8 @@ protected:
 	void OnDeath();
 
 protected:
+	UFUNCTION()
+	void OnIdleOnce();
 	UFUNCTION()
 	void OnStabilizeOnce();
 	UFUNCTION()
@@ -137,6 +142,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FPlayerRelativePosition PosState;
 
+	TDoOnce OnceIdleNode;
 	TDoOnce OnceManeuverNode;
 	TDoOnce OnceAttackNode;
 	TDoOnce OnceStabilizeNode;

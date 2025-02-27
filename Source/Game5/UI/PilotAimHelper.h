@@ -41,6 +41,13 @@ protected:
 	TArray<int32> TurbineDigitData;
 	UPROPERTY()
 	TArray<int32> AltitudeDigitData;
+
+public:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<class UImage> ImageMissileCircle;
+	//UPROPERTY(meta = (BindWidget))
+	//TObjectPtr<class USizeBox> 
+
 protected:
 	static const int8 TurbineArrayLength = 3;
 

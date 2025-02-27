@@ -10,7 +10,7 @@
 #include "F15Pawn.generated.h"
 
 DECLARE_DELEGATE_FourParams(FHUDDelegate, float, float, float, float)
-DECLARE_DELEGATE(FViewChanger)
+DECLARE_MULTICAST_DELEGATE(FViewChanger)
 
 UENUM()
 enum class ECameraType : uint8
@@ -93,6 +93,9 @@ protected:	//Component
 	UPROPERTY()
 	TObjectPtr<class UFighterRotateComponent> InputRotateComponent;
 
+	UPROPERTY()
+	TObjectPtr<class ULockOnComponent> LockOnComponent;
+
 protected:	//Input, Control Surfaces Animation
 	UFUNCTION()
 	void ThrottleInput(const FInputActionValue& Value);
@@ -130,6 +133,10 @@ protected:	//Input, Control Surfaces Animation
 	class UInputMappingContext* AirCraftInputMapping;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Input")
 	class UInputDataAsset* InputAction;
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TArray<TObjectPtr<AActor>> FoundEnemy;		//Init found enemy in AUserController
 
 protected:
 	UPROPERTY()

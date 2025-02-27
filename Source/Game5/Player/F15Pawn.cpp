@@ -14,6 +14,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "FighterRotateComponent.h"
+#include "LockOnComponent.h"
 //Camera
 #include "Camera/CameraComponent.h"
 #include "GameFramework/SpringArmComponent.h"
@@ -75,6 +76,7 @@ AF15Pawn::AF15Pawn()
 	CockpitCamera->SetRelativeLocation(FVector(500.f, 0.f, 140.f));
 
 	InputRotateComponent = CreateDefaultSubobject<UFighterRotateComponent>(TEXT("InputRotateComponent"));
+	LockOnComponent = CreateDefaultSubobject<ULockOnComponent>(TEXT("LockOnComponent"));
 
 	Tags.Add(FName("Player"));
 
@@ -194,14 +196,15 @@ void AF15Pawn::RollRelease(const FInputActionValue& Value)
 void AF15Pawn::LaunchInput(const FInputActionValue& Value)
 {
 	bool bInput = Value.Get<bool>();
-
-	MissileAction();
+	
+	if (LockOnComponent->bLaunchable)
+		MissileAction();
 }
 
 void AF15Pawn::ChangeViewInput(const FInputActionValue& Value)
 {
 	RequestActiveCamera();
-	OnViewChange.ExecuteIfBound();
+	OnViewChange.Broadcast();
 }
 
 //Update PawnTransform
@@ -266,7 +269,7 @@ void AF15Pawn::RotateAnimation(float DeltaSeconds)
 
 void AF15Pawn::RequestActiveCamera()
 {
-	TObjectPtr<APlayerController> CastedController = Cast<APlayerController>(GetController());
+	APlayerController* CastedController = Cast<APlayerController>(GetController());
 	if (Camera->IsActive())
 	{
 		Camera->Deactivate();

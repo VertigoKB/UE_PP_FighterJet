@@ -55,5 +55,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class ABattleFieldLevelSequenceActor> SequenceExecuter;
 
+protected:
+	UPROPERTY(EditAnywhere)
+	bool bTriggerSwitch = true;
+
 	
 };

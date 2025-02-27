@@ -70,7 +70,13 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 	}
 	case EEnemyState::Idle:
 	{
+		OnceIdleNode.Execute([&]() { OnIdleOnce(); });
 		OnIdleTick();
+		break;
+	}
+	case EEnemyState::Init:
+	{
+		OnInitTick();
 		break;
 	}
 	case EEnemyState::Maneuver:
@@ -154,7 +160,7 @@ bool AEnemyPlaneController::Initialize()
 	return true;
 }
 
-void AEnemyPlaneController::OnIdleTick()
+void AEnemyPlaneController::OnInitTick()
 {
 
 	if (PositionUpdater->State != ECutSceneState::EndCutScene)
@@ -164,6 +170,7 @@ void AEnemyPlaneController::OnIdleTick()
 	OnceAttackNode.Reset();
 	OnceStabilizeNode.Reset();
 	OnceSearchNode.Reset();
+	OnceIdleNode.Reset();
 
 	OnceReceiveDelegateNode.Reset();
 	OnceSearchActionNode.Reset();
@@ -189,6 +196,18 @@ void AEnemyPlaneController::OnIdleTick()
 	else
 		State = EEnemyState::Maneuver;
 }
+void AEnemyPlaneController::OnIdleOnce()
+{
+	FTimerHandle IdleTimer;
+	GetWorldTimerManager().SetTimer(IdleTimer, FTimerDelegate::CreateLambda([]() {
+		
+		}), 3.f, false);
+}
+void AEnemyPlaneController::OnIdleTick()
+{
+}
+
+
 
 void AEnemyPlaneController::OnStabilizeOnce()
 {
@@ -197,7 +216,7 @@ void AEnemyPlaneController::OnStabilizeOnce()
 void AEnemyPlaneController::OnStabilizeTick()
 {
 	if (bStabilizeDone)
-		State = EEnemyState::Idle;
+		State = EEnemyState::Init;
 }
 
 void AEnemyPlaneController::OnManeuverOnce()

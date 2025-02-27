@@ -148,7 +148,7 @@ void ASecondCutSceneTrigger::SceneAPlayerSequence()
 
 void ASecondCutSceneTrigger::GameStart()
 {
-	if (false)
+	if (bTriggerSwitch)
 	{
 		PlayerPawn->PlayerState = EPlayerState::None;
 		PlayerPawn->ThrustSpeed = PlayerPawn->MaxThrustSpeed;
