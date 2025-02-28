@@ -69,6 +69,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool bTryStablize = false;
 
+
 protected:
 	UPROPERTY()
 	TObjectPtr<class AEnemySu33Pawn> CompOwner;
@@ -80,15 +81,16 @@ protected:
 	float MinThrustToNotFall = 4000.f;	//AirCraft will Fall Down if its speed less than this
 	UPROPERTY()
 	float ThrustMultiplier = 2500.f;
-	UPROPERTY()
-	float Gravity = 0.f;
 	UPROPERTY( )
 	float Drag = 0.25f;
 
 public:
+
 	//Constants
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	float MaxThrustSpeed = 15000.f;
+	UPROPERTY()
+	float Gravity = 0.f;
 	//DynamicVariables
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "DynamicVariables")
 	float ThrustSpeed = 0.f;

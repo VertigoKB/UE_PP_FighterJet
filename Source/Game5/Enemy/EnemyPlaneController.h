@@ -74,6 +74,9 @@ protected:
 	void OnAttackOnce();
 	UFUNCTION()
 	void OnSearchOnce();
+	UFUNCTION()
+	void OnDeathOnce();
+	
 
 protected:
 	void ReceiveDelegateCall(bool* ReceiveTarget);
@@ -147,6 +150,7 @@ protected:
 	TDoOnce OnceAttackNode;
 	TDoOnce OnceStabilizeNode;
 	TDoOnce OnceSearchNode;
+	TDoOnce OnceDeathNode;
 
 	TDoOnce OnceReceiveDelegateNode;
 	TDoOnce OnceSearchActionNode;

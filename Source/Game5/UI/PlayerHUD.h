@@ -27,6 +27,17 @@ protected:
 	UFUNCTION()
 	bool CachEnemy();
 
+	UFUNCTION()
+	void EnemyScreenPositionUpdater(float X, float Y);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void SetLockboxVisibility(bool bVisible);
+
+	UFUNCTION(BlueprintCallable)
+	void GameEndFadeOut();
+	UFUNCTION(BlueprintCallable)
+	void GameEndText();
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> BlackWidget;
@@ -51,9 +62,25 @@ public:
 	float PitchValue = 0.f;
 	UPROPERTY()
 	float RollValue = 0.f;
+
+public:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float EnemyX = 0.f;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float EnemyY = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bLockable = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bInLockOnRange = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bLocked = false;
 protected:
 	UPROPERTY()
 	TObjectPtr<class AF15Pawn> OwnerPlayer;
+
+	UPROPERTY()
+	TObjectPtr<class AUserController> MyController;
 
 	UPROPERTY()
 	TArray<TObjectPtr<AActor>> EnemyFinder;

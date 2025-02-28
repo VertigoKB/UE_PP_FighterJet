@@ -46,6 +46,7 @@ void AUserController::BeginPlay()
 		LockOnCenter = FVector2D(ScreenX * 0.5f, ScreenY * 0.5f);
 
 		}), 0.05f, false);
+
 }
 
 void AUserController::SetupInputComponent()
@@ -128,7 +129,8 @@ void AUserController::SearchAndBroadcast()
 		
 		if (ConditionA && ConditionB)
 		{
-			
+			SendEnemyPos.ExecuteIfBound(EnemyScreenPosition.X, EnemyScreenPosition.Y);
+			InLockOnRange.ExecuteIfBound();
 			DoLockOnOnce.Execute([&]() {
 				OnLockOnable.Broadcast();
 				DoEnemyLostOnce.Reset();
@@ -138,6 +140,7 @@ void AUserController::SearchAndBroadcast()
 		{
 			DoEnemyLostOnce.Execute([&]() {
 				OnEnemyLost.Broadcast();
+				NotLockOnRange.ExecuteIfBound();
 				DoLockOnOnce.Reset();
 				});
 		}

@@ -23,6 +23,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void PlayFadeOut();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetEndMentVisibility(bool bVisible);
 
 	UPROPERTY(meta = (BindWidget))
 	class UImage* BlackImage;

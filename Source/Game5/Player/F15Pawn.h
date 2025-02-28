@@ -19,8 +19,8 @@ enum class ECameraType : uint8
 	Cockpit,
 	CutScene
 };
-UENUM()
-enum class EPlayerState : uint8
+UENUM(BlueprintType)
+enum class EThePlayerState : uint8
 {
 	None = 0,
 	CutScene
@@ -49,7 +49,8 @@ public:
 
 	FTimerHandle HudValueExecuter;
 
-	EPlayerState PlayerState;
+	UPROPERTY(EditAnywhere)
+	EThePlayerState ThePlayerState;
 
 protected:
 	// Called when the game starts or when spawned
@@ -66,6 +67,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void RequestRetractWheel();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlaySoundLaunchMissile();
 
 protected:	//Missile
 	UFUNCTION(BlueprintCallable)

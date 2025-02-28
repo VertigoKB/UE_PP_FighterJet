@@ -9,6 +9,8 @@
 #include "ArtificalHorizon.h"
 #include "../Player/F15Pawn.h"
 #include "../Enemy/EnemySu33Pawn.h"
+#include "../Player/UserController.h"
+#include "../Player/LockOnComponent.h"
 
 void APlayerHUD::BeginPlay()
 {
@@ -49,10 +51,30 @@ void APlayerHUD::BeginPlay()
 		{
 			OwnerPlayer->OnReceiveHudValue.BindUObject(this, &APlayerHUD::AsyncValue);
 			OwnerPlayer->OnViewChange.AddUObject(this, &APlayerHUD::ChangeVisiblity);
+
+			MyController = Cast<AUserController>(OwnerPlayer->GetController());
 		}
 	}
-
+	if (MyController)
+	{
+		MyController->OnLockOnable.AddLambda([&]() { bLockable = true; });
+		MyController->OnEnemyLost.AddLambda([&]() { bLockable = false; });
+		MyController->InLockOnRange.BindLambda([&]() { bInLockOnRange = true; });
+		MyController->NotLockOnRange.BindLambda([&]() { bInLockOnRange = false; });
+		MyController->SendEnemyPos.BindUObject(this, &APlayerHUD::EnemyScreenPositionUpdater);
+	}
 	CachEnemy();
+
+	if (OwnerPlayer)
+	{
+		UActorComponent* RawLockComp = OwnerPlayer->GetComponentByClass(ULockOnComponent::StaticClass());
+		if (RawLockComp)
+		{
+			ULockOnComponent* LockComp = Cast<ULockOnComponent>(RawLockComp);
+			LockComp->OnLocked.BindLambda([&]() { bLocked = true; });
+			LockComp->OnLostSignal.BindLambda([&]() { bLocked = false; });
+		}
+	}
 	
 }
 
@@ -76,11 +98,13 @@ void APlayerHUD::ChangeVisiblity()
 	{
 		GeneratedAimHelper->SetVisibility(ESlateVisibility::Visible);
 		GeneratedHorizon->SetVisibility(ESlateVisibility::Visible);
+		SetLockboxVisibility(true);
 	}
 	else
 	{
 		GeneratedAimHelper->SetVisibility(ESlateVisibility::Collapsed);
 		GeneratedHorizon->SetVisibility(ESlateVisibility::Collapsed);
+		SetLockboxVisibility(false);
 	}
 }
 
@@ -102,4 +126,20 @@ bool APlayerHUD::CachEnemy()
 
 	return true;
 
+}
+
+void APlayerHUD::EnemyScreenPositionUpdater(float X, float Y)
+{
+	EnemyX = X;
+	EnemyY = Y;
+}
+
+void APlayerHUD::GameEndFadeOut()
+{
+	GeneratedBlackWidget->PlayFadeOut();
+}
+
+void APlayerHUD::GameEndText()
+{
+	GeneratedBlackWidget->SetEndMentVisibility(true);
 }

@@ -51,7 +51,7 @@ void ASecondCutSceneTrigger::SettingActors()
 		
 		if (bInitFlag)
 		{
-			PlayerPawn->PlayerState = EPlayerState::CutScene;
+			PlayerPawn->ThePlayerState = EThePlayerState::CutScene;
 			PlayerPawn->ThrustParam = PlayerPawn->MaxThrustSpeed;
 
 			PlayerPawn->RequestRetractWheel();
@@ -150,7 +150,7 @@ void ASecondCutSceneTrigger::GameStart()
 {
 	if (bTriggerSwitch)
 	{
-		PlayerPawn->PlayerState = EPlayerState::None;
+		PlayerPawn->ThePlayerState = EThePlayerState::None;
 		PlayerPawn->ThrustSpeed = PlayerPawn->MaxThrustSpeed;
 		PlayerPawn->CurrentSpeed = PlayerPawn->MaxThrustSpeed;
 

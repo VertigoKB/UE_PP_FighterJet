@@ -100,7 +100,7 @@ void AFirstCutSceneTrigger::FindPlayer()
 		{
 			bSceneTrigger = true;
 			WaittingLocation = PlayerPawn->GetActorLocation();
-			PlayerPawn->PlayerState = EPlayerState::CutScene;
+			PlayerPawn->ThePlayerState = EThePlayerState::CutScene;
 			SetActorTickEnabled(true);
 		}
 		else

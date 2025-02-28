@@ -85,7 +85,7 @@ void UEnemyPositionUpdater::UpdatePosition(float DeltaSeconds)
 	else
 		AppliedGravity = 0.f;
 
-	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds * 1.5f);
+	float FallingScale = NewPosition.Z - (AppliedGravity * DeltaSeconds * 3.5f);
 	NewPosition = FVector(NewPosition.X, NewPosition.Y, FallingScale);
 
 	CompOwner->AddActorWorldOffset(NewPosition, true, nullptr, ETeleportType::TeleportPhysics);

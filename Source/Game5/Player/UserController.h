@@ -7,6 +7,9 @@
 #include "../CommonData/TDoOnce.h"
 #include "UserController.generated.h"
 
+DECLARE_DELEGATE_TwoParams(FSendEnemyPos, float, float)
+DECLARE_DELEGATE(FInLockOnRange)
+DECLARE_DELEGATE(FNotLockOnRange)
 DECLARE_MULTICAST_DELEGATE(FOnLockOnable)
 DECLARE_MULTICAST_DELEGATE(FOnEnemyLost)
 
@@ -48,7 +51,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<class UPilotAimHelper> PilotAimWidget;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TObjectPtr<AActor>> EnemyFinder;
 	
 protected:
@@ -69,6 +72,9 @@ protected:
 public:
 	FOnLockOnable OnLockOnable;
 	FOnEnemyLost OnEnemyLost;
+	FInLockOnRange InLockOnRange;
+	FSendEnemyPos SendEnemyPos;
+	FNotLockOnRange NotLockOnRange;
 
 protected:
 	TDoOnce DoLockOnOnce;

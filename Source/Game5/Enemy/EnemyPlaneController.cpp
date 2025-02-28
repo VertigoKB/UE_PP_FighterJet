@@ -102,6 +102,12 @@ void AEnemyPlaneController::Tick(float DeltaTime)
 		OnAttackTick();
 		break;
 	}
+	case EEnemyState::Death:
+	{
+		OnceDeathNode.Execute([&]() { OnDeathOnce(); });
+		OnDeath();
+		break;
+	}
 	}
 
 	//if (PosState.bIsInRange == true &&
@@ -199,8 +205,8 @@ void AEnemyPlaneController::OnInitTick()
 void AEnemyPlaneController::OnIdleOnce()
 {
 	FTimerHandle IdleTimer;
-	GetWorldTimerManager().SetTimer(IdleTimer, FTimerDelegate::CreateLambda([]() {
-		
+	GetWorldTimerManager().SetTimer(IdleTimer, FTimerDelegate::CreateLambda([&]() {
+		State = EEnemyState::Init;
 		}), 3.f, false);
 }
 void AEnemyPlaneController::OnIdleTick()
@@ -216,7 +222,7 @@ void AEnemyPlaneController::OnStabilizeOnce()
 void AEnemyPlaneController::OnStabilizeTick()
 {
 	if (bStabilizeDone)
-		State = EEnemyState::Init;
+		State = EEnemyState::Idle;
 }
 
 void AEnemyPlaneController::OnManeuverOnce()
@@ -298,8 +304,44 @@ void AEnemyPlaneController::OnSearchTick()
 		State = EEnemyState::Stabilize;
 }
 
+void AEnemyPlaneController::OnDeathOnce()
+{
+	GetWorldTimerManager().ClearTimer(RelativeLocGetter);
+	RelativeLocGetter.Invalidate();
+	GetWorldTimerManager().ClearTimer(ManeuverTimer);
+	ManeuverTimer.Invalidate();
+	GetWorldTimerManager().ClearTimer(PosStateUpdater);
+	PosStateUpdater.Invalidate();
+	PositionUpdater->Gravity = 981.f;
+
+	OnceManeuverNode.Reset();
+	OnceAttackNode.Reset();
+	OnceStabilizeNode.Reset();
+	OnceSearchNode.Reset();
+	OnceIdleNode.Reset();
+
+	OnceReceiveDelegateNode.Reset();
+	OnceSearchActionNode.Reset();
+
+	OnceBNode.Reset();
+	OnceCNode.Reset();						//Reset all DoOnce
+
+	FloatConditionA = 0.f;
+	FloatConditionB = 0.f;
+	CompOperator = NAME_None;
+	DelegateDone = nullptr;
+
+	//InitFalseDelegateBoolean();				//Reset all delegate receiver
+	bRollingDone = false;
+	bPullUpDone = false;
+	bImmelmannTurnDone = false;
+	bStabilizeDone = false;
+	MyPawn->InitFalseManeuverBoolean();	//Reset ai joystick
+
+}
 void AEnemyPlaneController::OnDeath()
 {
+	State = EEnemyState::Death;
 }
 
 void AEnemyPlaneController::ReceiveDelegateCall(bool* ReceiveTarget)

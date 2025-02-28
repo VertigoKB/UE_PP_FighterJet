@@ -6,6 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "LockOnComponent.generated.h"
 
+DECLARE_DELEGATE(FLocked)
+DECLARE_DELEGATE(FLostSignal)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API ULockOnComponent : public UActorComponent
@@ -30,6 +32,8 @@ protected:
 
 protected:
 	UPROPERTY()
+	TObjectPtr<class AF15Pawn> PlayerPawn;
+	UPROPERTY()
 	TObjectPtr<class AUserController> UserController;
 
 protected:
@@ -43,5 +47,9 @@ protected:
 public:
 	UPROPERTY()
 	bool bLaunchable = false;
+
+public:
+	FLocked OnLocked;
+	FLostSignal OnLostSignal;
 		
 };
