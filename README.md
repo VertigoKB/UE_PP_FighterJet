@@ -1,6 +1,8 @@
 # UE_PP_FighterJet
 Unreal Engine Portfolio Project For [GameName: FighterJet]   
 언리얼 엔진 포트폴리오 프로젝트 입니다. [게임명: FighterJet]   
+
+https://youtu.be/comu-18mKE0
    
 Using External Asset   
 사용된 외부 에셋:   
