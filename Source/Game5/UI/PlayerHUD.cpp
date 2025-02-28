@@ -59,8 +59,8 @@ void APlayerHUD::BeginPlay()
 	{
 		MyController->OnLockOnable.AddLambda([&]() { bLockable = true; });
 		MyController->OnEnemyLost.AddLambda([&]() { bLockable = false; });
-		MyController->InLockOnRange.BindLambda([&]() { bInLockOnRange = true; });
-		MyController->NotLockOnRange.BindLambda([&]() { bInLockOnRange = false; });
+		MyController->InLockOnRange.AddLambda([&]() { bInLockOnRange = true; });
+		MyController->NotLockOnRange.AddLambda([&]() { bInLockOnRange = false; });
 		MyController->SendEnemyPos.BindUObject(this, &APlayerHUD::EnemyScreenPositionUpdater);
 	}
 	CachEnemy();
@@ -71,8 +71,8 @@ void APlayerHUD::BeginPlay()
 		if (RawLockComp)
 		{
 			ULockOnComponent* LockComp = Cast<ULockOnComponent>(RawLockComp);
-			LockComp->OnLocked.BindLambda([&]() { bLocked = true; });
-			LockComp->OnLostSignal.BindLambda([&]() { bLocked = false; });
+			LockComp->OnLocked.AddLambda([&]() { bLocked = true; });
+			LockComp->OnLostSignal.AddLambda([&]() { bLocked = false; });
 		}
 	}
 	

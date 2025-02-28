@@ -33,6 +33,7 @@
 #include "../ObjectPool/ObjectPoolSystem.h"
 #include "../ObjectPool/PoolingObject.h"
 #include "../GameInstance/FighterGameInst.h"
+#include "UserController.h"
 
 // Sets default values
 AF15Pawn::AF15Pawn()
@@ -111,6 +112,13 @@ void AF15Pawn::BeginPlay()
 		float MappedThrust = (ThrustSpeed / MaxThrustSpeed) * 650.f;
 		OnReceiveHudValue.ExecuteIfBound(MappedThrust, MappedZ, PlayerPitch, PlayerRoll);
 		}), 0.02f, true);
+
+	LockOnComponent->OnLocked.AddLambda([&]() { PlayLockedSound(); });
+	LockOnComponent->OnLocking.BindLambda([&]() { PlayLockSound(); });
+
+	MyController = Cast<AUserController>(GetController());
+	if (MyController)
+		MyController->OnEnemyLost.AddUObject(this, &AF15Pawn::LockSoundClear);
 	
 }
 

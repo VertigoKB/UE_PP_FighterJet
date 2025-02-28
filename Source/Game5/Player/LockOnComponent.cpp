@@ -43,7 +43,10 @@ void ULockOnComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	if (bLockOnable)
 	{
 		if (LockOnElappsedTime < LockOnInterval)
+		{
 			LockOnElappsedTime += DeltaTime;
+			OnLocking.ExecuteIfBound();
+		}
 	}
 	else
 	{
@@ -56,14 +59,14 @@ void ULockOnComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 		//if (GEngine)
 		//	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Cyan, TEXT("Launchable"));
 		bLaunchable = true;
-		OnLocked.ExecuteIfBound();
+		OnLocked.Broadcast();
 	}
 	else
 	{
 		//if (GEngine)
 		//	GEngine->AddOnScreenDebugMessage(-1, 0.f, FColor::Black, TEXT("Cant Launc"));
 		bLaunchable = false;
-		OnLostSignal.ExecuteIfBound();
+		OnLostSignal.Broadcast();
 	}
 }
 

@@ -130,7 +130,7 @@ void AUserController::SearchAndBroadcast()
 		if (ConditionA && ConditionB)
 		{
 			SendEnemyPos.ExecuteIfBound(EnemyScreenPosition.X, EnemyScreenPosition.Y);
-			InLockOnRange.ExecuteIfBound();
+			InLockOnRange.Broadcast();
 			DoLockOnOnce.Execute([&]() {
 				OnLockOnable.Broadcast();
 				DoEnemyLostOnce.Reset();
@@ -140,7 +140,7 @@ void AUserController::SearchAndBroadcast()
 		{
 			DoEnemyLostOnce.Execute([&]() {
 				OnEnemyLost.Broadcast();
-				NotLockOnRange.ExecuteIfBound();
+				NotLockOnRange.Broadcast();
 				DoLockOnOnce.Reset();
 				});
 		}

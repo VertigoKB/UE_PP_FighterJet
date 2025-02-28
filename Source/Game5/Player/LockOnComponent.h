@@ -6,8 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "LockOnComponent.generated.h"
 
-DECLARE_DELEGATE(FLocked)
-DECLARE_DELEGATE(FLostSignal)
+DECLARE_MULTICAST_DELEGATE(FLocked)
+DECLARE_MULTICAST_DELEGATE(FLostSignal)
+DECLARE_DELEGATE(FOnLocking)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class GAME5_API ULockOnComponent : public UActorComponent
@@ -38,9 +39,9 @@ protected:
 
 protected:
 	float LockOnElappsedTime = 0.f;
-	float LockOnInterval = 1.5f;
+	float LockOnInterval = 2.5f;
 
-	float ReleaseLockRatio = 0.5f;
+	float ReleaseLockRatio = 0.6f;
 
 	bool bLockOnable = false;
 	
@@ -51,5 +52,6 @@ public:
 public:
 	FLocked OnLocked;
 	FLostSignal OnLostSignal;
+	FOnLocking OnLocking;
 		
 };

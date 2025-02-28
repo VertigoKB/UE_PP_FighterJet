@@ -71,6 +71,15 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void PlaySoundLaunchMissile();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayLockSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void PlayLockedSound();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void LockSoundClear();
+
 protected:	//Missile
 	UFUNCTION(BlueprintCallable)
 	FTransform GetMissileSocketLoaction(const uint8 SocketNum);
@@ -141,6 +150,9 @@ protected:	//Input, Control Surfaces Animation
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	TArray<TObjectPtr<AActor>> FoundEnemy;		//Init found enemy in AUserController
+
+	UPROPERTY()
+	TObjectPtr<class AUserController> MyController;
 
 protected:
 	UPROPERTY()
